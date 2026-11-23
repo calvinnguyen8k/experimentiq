@@ -1,0 +1,6 @@
+Follow agents.md, spec.md, and docs/architecture.md.
+Keep Python domain logic separate from the Next.js UI.
+Use strict Pydantic models, bounded inputs, explicit nullable unknowns and provenance.
+Never hardcode secrets or invent sample-size inputs.
+Use synthetic data and mocked provider calls in automated tests.
+Implement and verify one incremental slice at a time; document unfinished milestones honestly.
