@@ -1,0 +1,9 @@
+{
+  "production_daily_counter_present": true,
+  "real_redis_isolated_quota_probe": [
+    "ok",
+    "limited"
+  ],
+  "allowed_cors": true,
+  "untrusted_cors_rejected": true
+}

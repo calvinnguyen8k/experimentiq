@@ -37,9 +37,10 @@ inputs never produce a guessed sample size; conflicting intake values need corre
 The screenshot above is from the public deployment using real OpenAI calls.
 [Live workflow evidence](output/deployment/public-smoke.json) and the
 [downloaded synthetic report](output/deployment/synthetic-live-report.md) retain
-request IDs and results. The [two-minute walkthrough](output/demo/experimentiq-walkthrough.webm)
-is a separate, explicitly labelled provider-fixture demonstration with real Python
-calculations; it is not a recording of the public live-provider smoke test.
+request IDs and results. The [two-minute live demo](output/demo/experimentiq-live-demo.webm)
+records the deployed workflow with real OpenAI responses and Python calculations.
+Captions explain each stage; [recording evidence](output/demo/live-demo-evidence.json)
+retains request IDs. The older fixture-based walkthrough remains separately labelled.
 
 ## Local setup
 
@@ -173,7 +174,7 @@ provider errors. No experiment-history database or real experiment execution.
 Check marks below require observed evidence. Combined original rows are split so
 completed work does not hide a remaining release step.
 
-- [x] PRD with explicit unvalidated hypotheses
+- [x] Updated [one-page PRD](output/pdf/experimentiq-prd.pdf) with all six handbook components
 - [x] Technical specification, architecture notes, agent instructions, cursor rules
 - [x] Extraction with validation, missing questions, provenance and conflicts
 - [x] 123 backend tests and 14 browser tests; lint/typecheck/build pass locally
@@ -185,15 +186,16 @@ completed work does not hide a remaining release step.
 - [x] Critique, consistency checks and Markdown report/export
 - [x] Twenty synthetic model evaluation cases and measured, qualified metrics
 - [x] Competitor desk research with primary sources and evidence limits
-- [ ] Original seven course validation steps — not pursued at the user's request;
-      the supplied assignment brief still lists them. No claim of completion.
+- [ ] Exact seven-step course validation framework mapping: pending. The
+      [evidence report](docs/idea-validation-report.md) contains seven provisional
+      areas with sources and explicit limits, not a claim of official completion.
 - [ ] Independent user/market validation — no interviews or demand evidence supplied
 - [x] Public GitHub repository created: [experimentiq](https://github.com/calvinnguyen8k/experimentiq)
-- [x] Source/commit history pushed and [hosted CI passed](https://github.com/calvinnguyen8k/experimentiq/actions/runs/45183962597) for `dc4abe5`
+- [x] Source/commit history pushed and [hosted CI passed](https://github.com/calvinnguyen8k/experimentiq/actions/runs/45187570149) for `d6c2db7`
 - [x] Production usage-protection implementation and tests; free-hosting configuration
 - [x] Production secrets/quotas configured and live deployment verified
 - [x] Full public workflow verified in a fresh isolated Chromium context (incognito equivalent)
-- [x] README, screenshots and [two-minute labelled walkthrough](output/demo/experimentiq-walkthrough.webm)
+- [x] README, screenshots and [two-minute live demo](output/demo/experimentiq-live-demo.webm)
 - [x] [One-page reflection PDF](output/pdf/experimentiq-reflection.pdf), for owner review/personalization
 - [x] Public app, API, repository, demo, reflection and v2 issue links verified without login
 - [x] [GitHub v2 issue #1](https://github.com/calvinnguyen8k/experimentiq/issues/1) published
@@ -217,3 +219,16 @@ quota outages without disrupting production. See [deployment instructions](docs/
 metadata. The public HTML and seven JavaScript assets were checked against the
 configured backend credentials; none were present. Repository, demo, reflection
 and issue URLs returned HTTP 200 without login.
+
+## Assignment submission package
+
+[Download the submission ZIP](output/ExperimentIQ_Submission.zip) or use the
+[Canvas submission text](output/submission/Canvas_Submission.txt). The package
+includes a submission guide, sourced validation report, one-page PRD, spec.md,
+architecture notes/diagram, one-page reflection, a two-minute live demo, and
+verification evidence. PDF pages have been rendered and visually checked.
+
+The PRD follows the six components listed in the Week 4 Self-Learning Handbook,
+Chapter 6, pages 20-22. The exact seven-step validation framework is still unconfirmed;
+independent user testing has not been conducted. Review the reflection and these
+limits before submitting. No Canvas submission or email has been sent.

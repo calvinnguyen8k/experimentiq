@@ -1,25 +1,29 @@
-# Two-minute ExperimentIQ walkthrough
+# Two-minute ExperimentIQ live demo
 
-The companion video uses screenshots from automated browser tests. AI responses
-shown in those screens are provider fixtures; the sample-size calculation is real
-Python. Live OpenAI evaluation is recorded separately in `evals/results/`. This
-video is a reproducible product walkthrough, not evidence of public deployment.
+Submission recording: `output/demo/experimentiq-live-demo.webm`. Captured from
+https://experimentiq-omega.vercel.app in a fresh unauthenticated Chromium context
+on 23 November 2026. All three AI stages called real OpenAI; Python calculated the
+sample size. There were no provider mocks. Captions were added by the recording
+script to explain the live actions. The video is silent, with readable captions.
 
-| Time | Screen / action | Explanation |
-|---|---|---|
-| 0:00-0:10 | Product introduction | ExperimentIQ turns an experiment idea into a draft plan, calculation and risk review. |
-| 0:10-0:20 | Intake | Use synthetic data. The complete preset supplies explicit fictional baselines and an eligible pool. |
-| 0:20-0:30 | Extracted facts | User entries, quoted extractions and unknowns retain distinct provenance. |
-| 0:30-0:40 | Missing inputs | Missing mean/SD stays unknown. No fabricated sample size fills the gap. |
-| 0:40-0:50 | Design proposal | A separate structured AI call proposes hypothesis, arms, assignment, metric and window. |
-| 0:50-1:00 | Design gate | Accept the draft before Next: Statistical validation becomes available. |
-| 1:00-1:10 | Numerical inputs | Review mean 200, SD 100, 5% effect, alpha .05, power .8 and equal allocation. |
-| 1:10-1:20 | Calculation | Python returns 1,570 per arm: 3,140 total, within the 100,000-unit pool. |
-| 1:20-1:30 | Review | The critic ranks risks and recommends mitigations; it cannot replace the calculation. |
-| 1:30-1:40 | Unresolved issues | Assumptions and open questions remain visible. Export does not authorize launch. |
-| 1:40-1:50 | Markdown report | Acknowledge the review, preview the complete report, then download a Markdown draft. |
-| 1:50-2:00 | Iteration and limits | Go back to edit; downstream results clear. Scope is independent two-arm, fixed-horizon planning. |
+| Time | Action |
+|---|---|
+| 0:00-0:07 | Introduce ExperimentIQ and the live URL. |
+| 0:07-0:17 | Load the complete fictional spending example. |
+| 0:17-0:31 | Extract facts and explain provenance. |
+| 0:31-0:48 | Generate and acknowledge the proposed design. |
+| 0:48-0:59 | Review and confirm numerical assumptions. |
+| 0:59-1:13 | Calculate and show 1,570 per arm, 3,140 total. |
+| 1:13-1:34 | Request and inspect independent AI risk review. |
+| 1:34-1:44 | Inspect unresolved assumptions. |
+| 1:44-1:53 | Acknowledge risks and download the Markdown report. |
+| 1:53-2:00 | Edit SD to demonstrate blocking and downstream invalidation. |
 
-For the final public-site demonstration, repeat these actions in a fresh/incognito
-browser against the deployed URL, using real OpenAI responses, and record the
-verified URL alongside the video. Do not describe fixture screenshots as live AI.
+`output/demo/live-demo-evidence.json` records event times, model metadata and the
+four successful API request IDs. `output/demo/live-demo-report.md` is the actual
+download from this recording. The source capture was trimmed to two minutes;
+app responses and calculations were not substituted.
+
+The earlier `experimentiq-walkthrough.webm` uses explicitly labelled fixture
+screenshots. It is retained as a historical walkthrough and is not the submission
+recording.

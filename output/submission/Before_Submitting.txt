@@ -1,0 +1,12 @@
+Before submitting on Canvas
+
+1. Add your name and student identifier in the fields required by Canvas.
+2. Read the one-page reflection and edit it to accurately represent your own learning and decisions. AI-assisted implementation is disclosed.
+3. Confirm the course's exact seven Idea Validation Framework steps. The report's seven evidence areas are explicitly provisional, not a claim of official framework completion.
+4. Add genuine intended-user testing evidence if available. Do not turn the proposed five-person study into claimed results.
+5. Open the application, repository and live demo links without being signed in. Attach the PDFs, spec.md and architecture notes, or upload the ZIP if Canvas permits.
+6. Paste Canvas_Submission.txt into the submission field. Review its validation caveat and any instructor requirements, then select Submit Assignment yourself.
+
+The PRD follows the six components actually listed on pages 20-22 of the Week 4 Self-Learning Handbook. Course PDFs are not redistributed in this package. Deployment is manual via Vercel CLI; GitHub Actions automates verification.
+
+No email has been sent and no Canvas submission has been made by the assistant.

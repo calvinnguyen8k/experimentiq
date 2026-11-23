@@ -1,0 +1,99 @@
+{
+  "project": "ExperimentIQ",
+  "date": "2026-11-23",
+  "remaining_requirements": [
+    "Confirm exact seven-step validation framework mapping",
+    "Collect genuine independent user evidence",
+    "Owner review of reflection and Canvas identity fields"
+  ],
+  "files": {
+    "01_Submission_Guide.pdf": {
+      "bytes": 5337,
+      "sha256": "5c6220108123998de905e8ddf74d0429686bd687fbec18000fb1fa35992c2215"
+    },
+    "02_Idea_Validation_Report.pdf": {
+      "bytes": 9352,
+      "sha256": "ce84f27a443d237bb2c7d9c17d3dda203caadb39af64755cd0cb81f0b0347dcc"
+    },
+    "03_PRD_One_Page.pdf": {
+      "bytes": 4117,
+      "sha256": "4fea025f482fdc1751c7444e6f71b1b91a51c07644ea3d0f24e93b6d15e857be"
+    },
+    "04_Architecture_Summary.pdf": {
+      "bytes": 6256,
+      "sha256": "ee12f1b157b2e2e6098bc8af45f453d8c8a49de7b051df4c1700d126046694ed"
+    },
+    "05_Reflection_One_Page.pdf": {
+      "bytes": 3904,
+      "sha256": "8d6a750456029fe1fa4d4da3208627c82de98a74fa1412c7f51c89e19483dc81"
+    },
+    "06_Live_Demo_2_Minutes.webm": {
+      "bytes": 3076480,
+      "sha256": "8b54f654cf91254b456e3564f9260de43a4065c6b34af332eb2e339e8c904d68"
+    },
+    "Architecture_Notes.md": {
+      "bytes": 8880,
+      "sha256": "858fea5713e3d026ba567473aaa9454ff55494261e0f0346c75a2bbd70318368"
+    },
+    "Before_Submitting.txt": {
+      "bytes": 1187,
+      "sha256": "18ea3559050f2de4ef845d5a81498d9b33efb643e6a7da8f0ec98ae366ac84d4"
+    },
+    "Canvas_Submission.txt": {
+      "bytes": 2983,
+      "sha256": "b7a8518c79b09a12c6420dfed5b38a2a22b41b5b774264cf18923010d4b19171"
+    },
+    "Demo_Timeline.md": {
+      "bytes": 1549,
+      "sha256": "f2e7d9e5b8494fd23208f53107ae58185c03498de4f528cbd7c80aad84cd2565"
+    },
+    "Deployment_Runbook.md": {
+      "bytes": 4083,
+      "sha256": "a8c6d85c93b078967b39bf611bd4400c82c9748802e562ec9aff1acb330b76da"
+    },
+    "editable/Architecture_Summary.md": {
+      "bytes": 4499,
+      "sha256": "ea8edfc226fa370091c96f25e076b5a487f643f0c886146d01d3c3b9c53d91c0"
+    },
+    "editable/Idea_Validation_Report.md": {
+      "bytes": 7978,
+      "sha256": "4604f64660b05e54c4262dc837df4b080d53b4b0beeb09b957752ccfa12ec114"
+    },
+    "editable/PRD.md": {
+      "bytes": 3199,
+      "sha256": "14c0ef4f0058c472eadfc81c4008aa5d67f9c97d8120e0bd5a72243781eece6e"
+    },
+    "editable/Reflection.md": {
+      "bytes": 3262,
+      "sha256": "fcd5b69c04c03b0bf6d5cf9d1ddc9b1e1a25bb70d78861afbc0574b1908137ae"
+    },
+    "evidence/Downloaded_Report.md": {
+      "bytes": 8978,
+      "sha256": "d5d56066e60480d1245d8c00be6b02593a9fa9e82d7671e9b22865700b3ac6ba"
+    },
+    "evidence/GitHub_Actions.yml": {
+      "bytes": 1694,
+      "sha256": "2e3408d14f67c65e7a645947393cb7d5cdf77c0b6d4b2fa3d4bb08be5b2354a9"
+    },
+    "evidence/Live_Demo.json": {
+      "bytes": 3091,
+      "sha256": "2b9ab9de85cf9d2e3323d34dac79e44b314861516139ef56d8d3eb12d2f34ffb"
+    },
+    "evidence/Monitoring.json": {
+      "bytes": 2517,
+      "sha256": "07ef0fcfdc01c66752937ff00122b6dcc460de10c350944dd623fd10cced6bd1"
+    },
+    "evidence/Public_Workflow.json": {
+      "bytes": 2001,
+      "sha256": "cb3e5689623b99649913bb9a273ee140a6e3b70635cf70744abdd15169d3e798"
+    },
+    "evidence/Quota_and_CORS.json": {
+      "bytes": 174,
+      "sha256": "ebbe9597f2c788731ddd76bc80b8eccf56566063deb5347b68a20048127573de"
+    },
+    "spec.md": {
+      "bytes": 14483,
+      "sha256": "463fdbd7b458d38d376f17c8b88aed090d98f9319443658f3456f5fa92c26d88"
+    }
+  }
+}

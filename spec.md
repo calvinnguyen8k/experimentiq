@@ -7,7 +7,8 @@ The revision 3 contract below supersedes the earlier increment descriptions.
 
 Next.js App Router + TypeScript + Tailwind; Python 3.11+ + FastAPI + Pydantic v2;
 official OpenAI async SDK. `backend/app/{api,llm,schemas,services}` separate routing,
-provider integration, data contracts, and deterministic policy. No database/auth.
+provider integration, data contracts, and deterministic policy. No experiment-history
+database or user authentication; Redis stores production quota state.
 
 ## Current API
 
@@ -55,7 +56,7 @@ Response 200, abbreviated example (all seven fact keys are always present):
   "questions": [{"field":"baseline_mean","reason":"missing","question":"What is the baseline mean in the metric's units?"}],
   "conflicts": [],
   "statistics_status": "not_computed",
-  "metadata": {"model":"gpt-4.1-mini","prompt_version":"extract_v1","latency_ms":1234,"attempts":1,"input_tokens":500,"output_tokens":200,"estimated_cost_usd":null}
+  "metadata": {"model":"gpt-4.1-mini","prompt_version":"extract_v2","latency_ms":1234,"attempts":1,"input_tokens":500,"output_tokens":200,"estimated_cost_usd":null}
 }
 ```
 

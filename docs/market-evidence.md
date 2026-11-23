@@ -22,7 +22,8 @@ independent market interviews. The implemented progression and gated controls
 respond to that feedback; automated browser tests verify the mechanics, not user
 satisfaction or market fit.
 
-The user requested that the original seven course idea-validation steps not be
-pursued. Record them as excluded by user direction, not completed. The supplied
-assignment brief still lists those steps; this scope decision does not establish
-course compliance. No checklist or interviews have been invented in their place.
+The current submission request includes all seven course validation steps. The
+Week 4 Self-Learning Handbook supplies validation guidance but does not explicitly
+identify a seven-step sequence. The submission report organizes available evidence
+into provisional areas and marks the official framework mapping and independent
+user evidence as pending. No interviews or course-completion claims are invented.

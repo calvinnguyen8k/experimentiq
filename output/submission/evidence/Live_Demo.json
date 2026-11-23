@@ -1,0 +1,100 @@
+{
+  "recorded_at": "2026-11-23T14:11:26.925Z",
+  "url": "https://experimentiq-omega.vercel.app",
+  "recording": "Fresh Chromium context; live UI; real provider; narration captions added by recording script; no mocked responses",
+  "events": [
+    {
+      "seconds": 1,
+      "caption": "ExperimentIQ | Live deployed app | Synthetic example, real OpenAI responses"
+    },
+    {
+      "seconds": 7,
+      "caption": "1. Load fictional inputs: 100,000 customers, mean $200, SD $100, target increase 5%."
+    },
+    {
+      "seconds": 21,
+      "caption": "Extracted text stays unconfirmed. Explicit form values remain the calculator inputs."
+    },
+    {
+      "seconds": 36,
+      "caption": "2. AI proposes a hypothesis, treatment, control, randomization unit and observation window."
+    },
+    {
+      "seconds": 43,
+      "caption": "Review the proposal. The next stage requires an explicit design acknowledgement."
+    },
+    {
+      "seconds": 48,
+      "caption": "3. Confirm numerical assumptions: alpha 0.05, power 0.80, equal allocation."
+    },
+    {
+      "seconds": 60,
+      "caption": "Python calculates 1,570 per arm, 3,140 total. The AI cannot replace this result."
+    },
+    {
+      "seconds": 82,
+      "caption": "4. A separate AI critic ranks design risks and recommends mitigations."
+    },
+    {
+      "seconds": 94,
+      "caption": "Open assumptions remain visible. This is a draft plan, not approval to launch."
+    },
+    {
+      "seconds": 104,
+      "caption": "Download the complete Markdown report with inputs, calculations, risks and request IDs."
+    },
+    {
+      "seconds": 113,
+      "caption": "Missing SD blocks calculation. Editing inputs clears later results. experimentiq-omega.vercel.app"
+    }
+  ],
+  "calls": [
+    {
+      "route": "/api/v1/experiments/extract",
+      "status": 200,
+      "request_id": "6a6ba896-09d9-4c5a-a073-7ca065d4ac45",
+      "metadata": {
+        "model": "gpt-4.1-mini-2025-04-14",
+        "prompt_version": "extract_v2",
+        "latency_ms": 2608,
+        "attempts": 1,
+        "input_tokens": 1512,
+        "output_tokens": 111,
+        "estimated_cost_usd": null
+      }
+    },
+    {
+      "route": "/api/v1/experiments/design",
+      "status": 200,
+      "request_id": "e6de8169-ce8e-4d90-9a6f-cf19ae27f737",
+      "metadata": {
+        "model": "gpt-4.1-mini-2025-04-14",
+        "prompt_version": "design_v1",
+        "latency_ms": 3671,
+        "attempts": 1,
+        "input_tokens": 890,
+        "output_tokens": 337,
+        "estimated_cost_usd": null
+      }
+    },
+    {
+      "route": "/api/v1/statistics/sample-size",
+      "status": 200,
+      "request_id": "b48cfb44-cab9-4f7a-ba71-362e2e924649"
+    },
+    {
+      "route": "/api/v1/experiments/review",
+      "status": 200,
+      "request_id": "0eb6f747-44f9-4096-b95e-ec40140d1a1c",
+      "metadata": {
+        "model": "gpt-4.1-mini-2025-04-14",
+        "prompt_version": "critic_v1",
+        "latency_ms": 7507,
+        "attempts": 1,
+        "input_tokens": 1487,
+        "output_tokens": 639,
+        "estimated_cost_usd": null
+      }
+    }
+  ]
+}

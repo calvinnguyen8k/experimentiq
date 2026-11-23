@@ -1,0 +1,40 @@
+ExperimentIQ - AI-Powered Experiment Design and Validation Assistant
+Week 4 Graded Assignment 4.2
+
+ExperimentIQ helps Product Managers and Growth Analysts turn a synthetic A/B test idea into a traceable draft. The workflow extracts facts, proposes a design, calculates sample size in Python, and produces an independent AI risk review with a downloadable Markdown report. Facts, AI suggestions and calculated results remain distinct.
+
+LIVE APPLICATION
+https://experimentiq-omega.vercel.app
+
+PUBLIC GITHUB REPOSITORY
+https://github.com/calvinnguyen8k/experimentiq
+The repository includes meaningful incremental commits, README, tests, project instructions, and a GitHub Actions verification workflow. CI is automated; deployment is performed separately through Vercel CLI.
+
+IDEA VALIDATION REPORT
+https://github.com/calvinnguyen8k/experimentiq/blob/main/docs/idea-validation-report.md
+Supporting evidence includes competitor sources, actual project-owner usability feedback, engineering verification and a prospective user-test plan. The exact official seven-step framework mapping and independent user-study results remain pending; this report does not claim they are complete.
+
+ONE-PAGE PRD
+https://github.com/calvinnguyen8k/experimentiq/blob/main/output/pdf/experimentiq-prd.pdf
+Uses the six components named in the Week 4 Self-Learning Handbook: problem statement, target users, MVP features, out of scope, success metrics and open questions.
+
+SPECIFICATION AND ARCHITECTURE
+https://github.com/calvinnguyen8k/experimentiq/blob/main/spec.md
+https://github.com/calvinnguyen8k/experimentiq/blob/main/docs/architecture.md
+https://github.com/calvinnguyen8k/experimentiq/blob/main/output/pdf/experimentiq-architecture-summary.pdf
+
+TWO-MINUTE LIVE DEMO
+https://github.com/calvinnguyen8k/experimentiq/blob/main/output/demo/experimentiq-live-demo.webm
+Captioned recording of the deployed app using synthetic inputs and real OpenAI responses. If GitHub offers a download rather than an inline player, use Download raw file.
+
+ONE-PAGE REFLECTION
+https://github.com/calvinnguyen8k/experimentiq/blob/main/output/pdf/experimentiq-reflection.pdf
+
+VERIFICATION EVIDENCE
+https://github.com/calvinnguyen8k/experimentiq/actions/runs/45187570149
+123 backend tests and 14 browser tests passed on the deployed code release. A fresh unauthenticated public workflow completed extraction, design, calculation, review and report download. The reference example returned 1,570 participants per arm, 3,140 total. The 20-case development evaluation completed 60 schema-validated stages; keyword-based risk checks do not establish human-reviewed methodological accuracy.
+
+V2 IMPROVEMENT ISSUE
+https://github.com/calvinnguyen8k/experimentiq/issues/1
+
+The MVP uses Next.js/TypeScript, FastAPI/Pydantic, OpenAI structured outputs, SciPy and shared Redis quotas. Both app and API use Vercel Hobby. Credentials remain server-side. The tool is for synthetic planning, not experiment execution or approval to launch.
