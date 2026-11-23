@@ -1,22 +1,43 @@
 # ExperimentIQ
 
-AI-assisted experiment intake for Product Managers and Growth Analysts. Describe a
-synthetic A/B test and inspect extracted values, supporting quotes, conflicts, and
-missing-information questions before making design or sample-size decisions.
+A planning workbench for Product Managers and Growth Analysts: turn a synthetic
+experiment idea into traceable inputs, a proposed design, a Python sample-size
+calculation, and an exportable risk review.
 
-**Current scope: intake and design proposal.** Next.js form → FastAPI → OpenAI
-structured extraction → validated facts/questions → **Generate experiment design**
-→ a proposed hypothesis, arms, assignment, metric, timeframe, and assumptions.
-Numerical statistics, independent critique, export, model evaluations, and public
-deployment are later increments. This is not the completed assignment.
+**The four-stage local workflow is implemented.** Public deployment and hosted CI
+are separate release checks below. This is planning assistance, not observed
+experiment results or approval to launch.
+
+## Try the complete example
+
+1. Click **Load complete synthetic example**, then **Extract experiment facts**.
+2. Click **Next: Generate experiment design**. Review the draft and check its
+   acknowledgement, then click **Next: Statistical validation**.
+3. Review the numerical inputs, check their confirmation, and click **Calculate
+   sample size**. The demo gives **1,570 control + 1,570 treatment = 3,140 total**.
+4. Click **Next: Review & export**. Review the risks and unresolved assumptions,
+   acknowledge them, then **Download Markdown report**.
+
+Every Next button explains its requirements. Reached stages are clickable. Back
+preserves unchanged work; editing intake clears later results, and changing
+calculator inputs clears the calculation/review. There are no automatic approvals.
+
+The complete preset uses fictional values: 100,000 eligible customers, mean spending
+200 USD, SD 100 USD, 5% relative increase, alpha .05, power .80 and equal allocation.
+The [copy-ready scenario](docs/complete-synthetic-example.md) explains the inputs.
+Use **Load example with missing data** to demonstrate unknown baselines. Missing
+inputs never produce a guessed sample size; conflicting intake values need correction.
+
+![Statistical planning screen](docs/screenshots/statistics-mocked.png)
+
+Screenshots and the [two-minute walkthrough](output/demo/experimentiq-walkthrough.webm)
+show provider-fixture UI responses with real Python calculations. They are explicitly
+labelled; live OpenAI evaluation results are recorded separately.
 
 ## Local setup
 
-Prerequisites: Python 3.11+ (tested locally with 3.13), Node 22, npm, and Git on
-macOS/Linux. An OpenAI API account/key with model access is required for **real**
-extraction; a ChatGPT subscription is not an API credential. Tests need no key.
-
-From the repository root:
+Verified runtime targets: Python 3.13, Node 22, npm and Git. OpenAI credentials are
+required for real extraction/design/critique; ordinary tests need no key.
 
 ```sh
 python3 -m venv backend/.venv
@@ -27,107 +48,64 @@ npm ci
 test -f .env.local || cp .env.example .env.local
 ```
 
-Edit `backend/.env` locally and set `OPENAI_API_KEY`. Never paste a key into the
-browser, source code, a commit, or chat. The backend reads `.env` relative to its
-working directory, so use the commands below. `OPENAI_MODEL` defaults to
-`gpt-4.1-mini` and is configurable. A live synthetic extraction was verified on
-2026-11-23; broader model quality remains unevaluated. Optional token prices enable approximate cost reporting;
-otherwise cost is null. Recheck prices when changing model/provider settings.
+Set `OPENAI_API_KEY` in `backend/.env` locally. Never put it in the browser, frontend,
+Git or chat. `OPENAI_MODEL` defaults to `gpt-4.1-mini`. Optional operator-supplied
+input/output prices enable cost estimates; otherwise cost is null. Do not overwrite
+existing environment files. Keep `PRODUCTION_MODE=false` for local development.
 
-Terminal 1, from repository root:
+From the repository root, in separate terminals:
 
 ```sh
 cd backend
 .venv/bin/uvicorn app.main:app --reload --host 127.0.0.1 --port 8000 --no-access-log
 ```
 
-Terminal 2, from repository root:
-
 ```sh
 cd frontend
 npm run dev
 ```
 
-Open [the local UI](http://127.0.0.1:3000),
-[API health](http://127.0.0.1:8000/health), or
-[interactive API schema](http://127.0.0.1:8000/docs).
-Health verifies process liveness only; absent credentials cause an explicit 503 on
-extraction. There is no simulated-success switch in the production application.
+Open [local UI](http://127.0.0.1:3000), [API health](http://127.0.0.1:8000/health), or
+[API contracts](http://127.0.0.1:8000/docs). Health is liveness, not provider readiness.
+Absent credentials produce an actionable error; production has no fake-success mode.
 
-## Try the synthetic scenario
-
-For a complete example, click **Load complete synthetic example**, then
-**Extract experiment facts**, then **Generate experiment design**. The preset fills
-the objective and confirmed inputs with fictional values: 100,000 eligible customers,
-continuous spending metric, baseline mean 200 USD, standard deviation 100 USD, and
-relative increase 0.05. Conversion rate is blank because it does not apply.
-See the [full copy-ready example](docs/complete-synthetic-example.md).
-
-The design screen contains a proposed hypothesis, treatment/control, assignment
-unit, primary metric, observation period, allocation, rationale, and questions.
-It labels AI suggestions and preserves the original planning inputs. Use
-**Back to intake** to revise inputs; edits invalidate old proposals.
-
-To see missing-information handling, click **Load example with missing data**, then
-**Extract experiment facts**. Expected behavior:
-
-- Population 100,000, continuous average card spending, relative increase 0.05.
-- Evidence quotes and a confirmation requirement for every prose-extracted value.
-- Questions for baseline mean and standard deviation, with both values null.
-- No fabricated numeric result or claim that an experiment is valid.
-
-Missing baselines allow design generation; actual contradictory inputs must be
-resolved first. A proposal is not a completed statistical validation. The new
-design stage is verified with mocked OpenAI; a live design smoke test is pending.
-
-Open **Optional confirmed inputs** to confirm or correct known values and rerun.
-Use decimals: `0.05` means 5%, `0.10` means 10%. Leave unknown fields blank. A
-conflicting form value wins, but a conflict warning asks you to reconcile the prose.
-Editing clears stale results. Continuous mean/SD and binary conversion inputs
-cannot be combined under a selected outcome type.
-The form shows only the relevant baseline fields and clears incompatible baseline
-inputs when you change outcome type. Different primary-metric wording is shown as
-an informational note; numeric/outcome-type conflicts still need resolution.
-
-## Architecture and decisions
+## Architecture and limits
 
 ```text
-Next.js UI → FastAPI validation / request limits
-           → OpenAI Responses API + strict Pydantic extraction
-           → evidence checks / explicit-input merge / deterministic questions
-           → UI facts, conflicts, unknowns, and confirmation prompts
-           → explicit Generate design action → structured design_v1 proposal
+Next.js UI → FastAPI validation and quotas
+           → OpenAI extraction → evidence/provenance checks
+           → separate AI design proposal → explicit confirmation
+           → deterministic Python sample-size calculation
+           → independent AI critic + retained Python result
+           → Markdown draft preview/download
 ```
 
-Python owns domain logic; TypeScript owns display and a runtime-validated API
-client. Exact supporting quotes reduce unsupported extraction but cannot prove
-semantic correctness: **all prose extraction remains unconfirmed**. Explicit form
-values are user-provided. No extracted number can silently feed future statistics.
-There is no database, history, auth, or persistent storage.
+Python owns validation, orchestration and statistics; TypeScript owns the UI.
+Exact extraction quotes are evidence of source text, not proof of correct
+interpretation. Extracted values remain unconfirmed. Calculator inputs come only
+from explicit form entries and visibly confirmed defaults. Review recomputes all
+numbers server-side and cannot accept an injected statistical result.
 
-The [technical spec](spec.md), [architecture decisions](docs/architecture.md), and
-[one-page PRD](docs/prd.md) explain contracts, scope, tradeoffs, and future work.
-[agents.md](agents.md) and [.cursorrules](.cursorrules) preserve these boundaries.
-The original [handoff](ExperimentIQ_Codex_Handoff.md) is unchanged.
+Supported statistics: independent two-arm, fixed-horizon, two-sided normal planning
+approximations for continuous or binary outcomes; positive absolute/relative MDE;
+unequal allocation. Unknown/unsupported inputs return null results. Clustering,
+pairing, repeated measures, sequential stopping, multiple arms and substantial
+interference need specialist methods. Rounded-allocation power is an approximation,
+not exact power. Feasibility checks eligible units, not recruitment time or attrition.
 
-See the [desktop](docs/screenshots/desktop-extraction-mocked.png) and
-[mobile](docs/screenshots/mobile-extraction-mocked.png) browser-test screenshots.
-Both use a mocked OpenAI response and synthetic data, not a live model run.
+[Specification](spec.md), [architecture decisions](docs/architecture.md),
+[PRD](docs/prd.md), [increment evidence](docs/increment-3.md), and
+[project guidance](agents.md) explain the boundaries. The original handoff is preserved.
 
 ## Verification
 
-Backend, from repository root:
+Run from the repository root:
 
 ```sh
-cd backend
-.venv/bin/ruff check .
-.venv/bin/ruff format --check .
-.venv/bin/python -m pytest -q
-```
-
-Frontend, from repository root:
-
-```sh
+backend/.venv/bin/ruff check backend evals
+backend/.venv/bin/ruff format --check backend evals
+backend/.venv/bin/python -m pytest -q backend
+python3 scripts/check_secrets.py
 cd frontend
 npm run lint
 npm run typecheck
@@ -136,70 +114,82 @@ npx playwright install chromium
 npm test
 ```
 
-Browser tests use an isolated `.next-e2e` build directory, start their own servers
-on 3100/8100, and invoke the actual frontend,
-FastAPI application, official OpenAI SDK, and validators. Only OpenAI HTTP is
-mocked for success scenarios. Additional UI error scenarios intercept the API.
-The fixture service lives exclusively in `backend/tests/e2e_api.py`; it is never
-selected by the production entry point. Ensure ports 3100/8100 are free.
+Verified locally: **123 backend tests, 14 browser tests**, lint, typechecking,
+production build and secret pattern scan. Statistical tests compare independently
+with Statsmodels for equal/unequal allocation. Shared quota tests execute the Lua
+script and verify concurrency, daily caps, expiry, peer limits and fail-closed errors.
 
-Secret pattern check, from repository root:
+Browser tests start isolated servers on 3100/8100 and use `.next-e2e`. Only provider
+HTTP is mocked in success scenarios; the frontend, FastAPI, SDK, schemas and
+calculator run normally. Tests also intercept errors deliberately. Run build/type
+checks before browser tests to avoid racing generated Next.js types.
+
+The [CI workflow](.github/workflows/ci.yml) repeats checks without a key. A workflow
+file or local pass is not proof of a successful hosted run. The secret scanner is
+an offline pattern check, not a complete secret-detection product.
+
+## Live evaluation
+
+[Twenty synthetic cases and evaluator](evals/README.md) cover complete/incomplete
+inputs, binary/continuous outcomes, biased selection, contamination, interference,
+unsupported designs and prompt injection. The final `extract_v2` run completed
+20/20 cases and 60/60 schema-validated stages. Annotated extraction and design-family
+checks passed; keyword-based risk recall also passed. **Keyword recall is a proxy,
+not human-validated methodological quality.** Development cases are not held out.
+Median three-stage latency: 14.31 s; p95: 17.79 s. Cost is unestimated because token
+prices were not configured. Earlier runs and annotation corrections are preserved.
 
 ```sh
-python3 scripts/check_secrets.py
+backend/.venv/bin/python evals/run_evals.py --live --output evals/results/new-run.json
 ```
 
-This lightweight scanner checks tracked and nonignored working files and refuses
-tracked environment files. It reports locations, not matched secret text. It is
-not an exhaustive secret-detection product. Environment files and dependency/build
-directories are ignored. Dependency resolutions are checked in for repeatability.
+This command makes real, billable provider calls. No real customer data is used.
 
-The [GitHub Actions workflow](.github/workflows/ci.yml) runs these checks on pushes
-and pull requests without an OpenAI key. A checked-in workflow is not evidence of
-a successful hosted CI run. Actual local results are recorded in
-[the first increment log](docs/increment-1.md) and [design increment log](docs/increment-2.md).
+## Operations and free deployment
 
-## Operational limits
+User-selected hosting scope: **free tiers only**. [Deployment runbook](docs/deployment.md)
+covers Vercel Hobby, Render Free, and durable free Redis usage quotas. Hosting being
+free does not make OpenAI calls free. Render's idle service may need to wake first.
 
-- Input: 20–4,000 characters; body ≤24 KiB; strict finite numeric ranges.
-- Default limits: 5 requests/client/minute, 30 total/minute, 3 concurrent provider
-  operations per process; use one worker for local verification.
-- SDK timeout 15 seconds and one transport retry; one schema/evidence repair;
-  overall 45-second deadline per stage, 50-second browser deadline.
-- CORS permits only configured origins; socket peer identity ignores untrusted
-  forwarded headers. Behind a proxy, clients may share the same rate budget.
-- Metadata logs contain request IDs, model/usage where available, latency, statuses,
-  and validation/error categories. They exclude raw objectives and provider text.
-  Failed/invalid responses may have unknown usage/cost; configured cost is an
-  estimate without cache discounts, not a billing reconciliation.
-- Requests use OpenAI `store=False`. This does not establish zero provider retention;
-  synthetic/public toy examples only. No confidential/customer data.
-
-Before public deployment: select a Python host, add shared/edge throttling and
-trusted proxy configuration, verify host budgets, configure HTTPS/origin allowlist,
-set the frontend API URL at build time, and run a live incognito smoke test.
-Vercel remains the intended frontend host. Nothing has been published.
+Production startup requires HTTPS origins and shared Redis credentials. Quota
+outages fail closed; default caps are 5 requests/peer/minute, 30 global/minute,
+3 concurrent and 120 requests/day UTC. Requests have a 24 KiB body limit, bounded
+input/output and retries, and 45-second AI stage deadlines. Untrusted forwarded
+headers are ignored, which can conservatively share a peer budget behind proxies.
+Logs contain request IDs, route/status/latency, error categories and available
+usage metadata; they never intentionally contain objectives, credentials or raw
+provider errors. No experiment-history database or real experiment execution.
 
 ## Assignment and next increments
 
+Check marks below require observed evidence. Combined original rows are split so
+completed work does not hide a remaining release step.
+
 - [x] PRD with explicit unvalidated hypotheses
 - [x] Technical specification, architecture notes, agent instructions, cursor rules
-- [x] Extraction implementation with input validation, missing questions, provenance
-- [x] 75 backend tests, 10 browser tests, lint/typecheck, and production build pass locally
+- [x] Extraction with validation, missing questions, provenance and conflicts
+- [x] 123 backend tests and 14 browser tests; lint/typecheck/build pass locally
 - [x] Local secret pattern check and metadata-only request logging
-- [x] Five meaningful local commits (public repository still pending)
-- [x] Successful live OpenAI extraction of the synthetic scenario in the UI
-- [x] AI design generation, suggestion provenance, and back/edit flow (mocked provider verified)
-- [ ] Live design-generation smoke test and final design confirmation before statistics
-- [ ] Independently tested binary/continuous sample-size engine
-- [ ] Critique, consistency checks, Markdown report/export
-- [ ] ~20 synthetic model evaluation cases and measured quality metrics
-- [ ] Original seven course validation steps; user/market/competitor evidence
-- [ ] Public GitHub repository and successful hosted CI run
-- [ ] Production abuse protection, monitoring, live deployment/incognito verification
-- [ ] Finished README/screenshots, 2-minute demo, 1-page reflection, v2 issue
+- [x] More than five meaningful local commits
+- [x] Successful live synthetic extraction and design generation observed in the UI
+- [x] Explicit design confirmation, visible Next buttons and back/edit flow
+- [x] Independently tested binary/continuous sample-size engine
+- [x] Critique, consistency checks and Markdown report/export
+- [x] Twenty synthetic model evaluation cases and measured, qualified metrics
+- [x] Competitor desk research with primary sources and evidence limits
+- [ ] Original seven course validation steps — not pursued at the user's request;
+      the supplied assignment brief still lists them. No claim of completion.
+- [ ] Independent user/market validation — no interviews or demand evidence supplied
+- [x] Public GitHub repository created: [experimentiq](https://github.com/calvinnguyen8k/experimentiq)
+- [ ] Source/commit history pushed and successful hosted CI run verified
+- [x] Production usage-protection implementation and tests; free-hosting configuration
+- [ ] Production secrets/quotas configured and live deployment verified
+- [ ] Full public/incognito workflow verified
+- [x] README, screenshots and [two-minute labelled walkthrough](output/demo/experimentiq-walkthrough.webm)
+- [x] [One-page reflection PDF](output/pdf/experimentiq-reflection.pdf), for owner review/personalization
+- [ ] Accessible final deployment/demo links verified for submission
+- [x] [GitHub v2 issue #1](https://github.com/calvinnguyen8k/experimentiq/issues/1) published
 
-Local test results and commit history are recorded separately; no assignment or
-portfolio quality target is marked achieved without evidence. Next implementation
-increment: confirm the proposed design and implement the deterministic statistical
-engine with independently verified reference cases.
+The [market evidence note](docs/market-evidence.md) distinguishes observed usability
+feedback from market validation. No checklist item is checked solely to make the
+assignment appear complete.

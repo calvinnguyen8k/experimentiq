@@ -1,7 +1,7 @@
 # ExperimentIQ technical specification
 
-Revision 2, 2026-11-23. Scope: **extraction and design proposal**. This document extends
-the handoff; future contracts below are design commitments, not working endpoints.
+Revision 3, 2026-11-23. Scope: **intake through review and Markdown export**.
+The revision 3 contract below supersedes the earlier increment descriptions.
 
 ## Runtime and structure
 
@@ -54,7 +54,7 @@ Response 200, abbreviated example (all seven fact keys are always present):
   },
   "questions": [{"field":"baseline_mean","reason":"missing","question":"What is the baseline mean in the metric's units?"}],
   "conflicts": [],
-  "statistics_status": "not_implemented",
+  "statistics_status": "not_computed",
   "metadata": {"model":"gpt-4.1-mini","prompt_version":"extract_v1","latency_ms":1234,"attempts":1,"input_tokens":500,"output_tokens":200,"estimated_cost_usd":null}
 }
 ```
@@ -122,8 +122,7 @@ population 100,000, a continuous spending metric, mean 200 USD, SD 100 USD, and
 relative increase 0.05; conversion rate remains null because it is inapplicable.
 It opens the input section and explains that values are fictional demo assumptions,
 not AI-inferred facts. Loading never submits automatically. Successful full intake
-has no missing questions; it can then proceed to design generation. This does not
-implement numerical statistics.
+has no missing questions; it can then proceed to design generation. Statistics are computed only in the next explicit, confirmed stage.
 
 ## Design proposal increment
 
@@ -148,62 +147,93 @@ marked `user_provided`; otherwise the generated metric is `llm_suggested`.
 
 `DesignResponse`: request_id, status (`proposal_ready` or `needs_attention` for
 unsupported/unclear families), design, source (`llm_suggested`), metric_source,
-planning_inputs, statistics_status (`not_implemented`), metadata. All numeric
+planning_inputs, statistics_status (`not_computed`), metadata. All numeric
 planning inputs remain unchanged, including null mean/SD. The proposal cannot
 provide an executable statistical result. A proposal is not a validated design.
 
 Same body/rate/concurrency limits, error envelope, transport/schema retry budget,
 45-second stage deadline, and metadata logging as extraction. Provider failures
-leave extraction visible and allow retrying design. The UI provides a distinct
-proposal screen, Back to intake control, and explicit planned statistics/review
-steps; no dead-end button that pretends those stages are implemented.
+leave extraction visible and allow retrying design. The UI provides a distinct proposal screen, Back to intake control, and
+confirmed progression to the statistics and review stages described below.
 
-## Remaining future typed contracts
+## Revision 3: complete workflow contract
 
-- Extend `DesignDraft` into the final reviewed experiment design when connecting
-  deterministic statistics and the independent critic. Suggestions never supply
-  assumed numerical baselines to the statistical engine.
-- `StatisticalRequest`: design_family (`independent_two_arm` only), metric_type,
-  confirmed numeric baselines, effect_type (`absolute`/`relative`), effect_value,
-  alpha (default .05), power (.80), allocation_ratio (treatment/control, 1), pool.
-  Require 0<alpha<1, .5<power<1, positive ratio/SD/effect; binary p0,p1 in (0,1).
-  Relative continuous MDE requires positive baseline mean; negative/zero means
-  require an explicitly supplied absolute effect.
-- `StatisticalResult`: status (`computed`, `insufficient_information`,
-  `unsupported_design`), n_control/n_treatment/total, feasible, immutable input
-  snapshot, formula_id, assumptions, missing_questions. Missing/unsupported states
-  carry null numbers. Designs involving clustering, sequential tests, repeated
-  measures, pairing, multiple arms, time series, or heavy interference are blocked.
-- `DesignRisk`: category, severity (high/medium/low), evidence, explanation,
-  recommendation. `ExperimentReview`: design, ranked risks, unresolved assumptions.
-- `ReviewResponse`: request ID, stage history, facts, design, immutable statistics,
-  review, conflicts, questions, metadata, status. `APIError` is implemented now.
-- Planned routes: `POST /api/v1/statistics/sample-size` and
-  `POST /api/v1/experiments/review`. Unimplemented routes return 404.
+Four navigable stages: intake, design proposal, statistics, review/export. Only
+reached stages are clickable. Next buttons state the destination and explain
+missing requirements. Editing intake invalidates all downstream state; changing
+statistical assumptions invalidates the calculation and review. Back preserves
+unchanged work. No automatic submission or approval.
 
-### Statistical implementation contract for next increments
+Design must be supported and explicitly accepted before statistics. Calculator
+inputs are user-entered or prefilled from explicit intake fields, never extracted
+prose or generated numbers. The statistical form visibly defaults alpha=.05,
+power=.8, treatment/control ratio=1; the user confirms these numerical settings
+and independent, two-arm, fixed-horizon assumptions. Absolute MDE is supported
+there, including continuous baselines <=0. Relative effects are positive increases.
+
+POST /api/v1/statistics/sample-size accepts StatisticalRequest: design_family,
+design_confirmed, independent_units, primary_metric, metric_type, population_size,
+baseline_mean, baseline_sd, baseline_conversion_rate, effect_type (absolute/relative),
+effect_value, alpha, power, allocation_ratio. Unknowns are null. Finite alpha is
+[.000001,.5], power (.5,.999999], ratio [.01,100], effect (0,1e12]. Baseline
+ranges match intake. Binary target must be strictly <1; relative continuous MDE
+requires positive mean. Incompatible baseline fields are rejected. These explicit
+operational bounds avoid numerical singularities and excessive resource usage.
+
+Result: request_id, source=derived, status computed/insufficient_information/
+unsupported_design/calculation_limit, inputs snapshot, n_control/n_treatment/total,
+actual_allocation_ratio, achieved_power (normal approximation), absolute_effect,
+target_rate, feasible, formula_id, assumptions, questions, warnings. Uncomputed
+states have null numeric results. Per-arm count is capped at 1 billion; minimum
+2/arm. Compute the specified closed-form approximations, round up, and verify
+power using actual rounded allocation; bounded upward search corrects rounding.
+Sparse binary counts and small continuous arms have explicit approximation warnings.
+Pool feasibility is required for a complete result but does not prevent reviewing
+an infeasible plan. No claim of observed outcomes or exact power.
+
+POST /api/v1/experiments/review accepts objective, DesignDraft, StatisticalRequest.
+It validates supported/confirmed design, matching primary metric/family, and
+recomputes statistics server-side. Client-supplied sample sizes/results are forbidden.
+Missing/unsupported statistics return actionable 422 before any provider call.
+Critic receives the design and immutable calculator result in a separate critic_v1
+call with the established time/retry/limit budget. Critique has summary, bounded
+ranked risks (category, severity, evidence, explanation, recommendation), unresolved
+assumptions. It cannot supply a statistical result. Server-derived feasibility and
+approximation warnings remain independent of AI opinions. Proposal questions and
+assumptions remain visible, never silently resolved by critique.
+
+ReviewResponse includes request_id, objective, design, derived statistics, critique,
+checks, status (review_complete/review_needs_attention), metadata. Export is a
+client-side Markdown draft containing all of these plus intake provenance and
+stage request IDs. User acknowledges risks before downloading. High risks,
+infeasibility or unresolved assumptions keep the report marked needs attention;
+export is documentation, never permission to run an experiment.
+
+Validation: SciPy normal quantiles/CDF; compare continuous counts/power to
+statsmodels NormalIndPower and binary counts/power to its two-proportion functions,
+including unequal allocations. Provider-mocked browser tests must traverse every
+stage, download and inspect report content, test disabled gates, error retry and
+stale-result invalidation on desktop and mobile.
+
+
+## Formula definitions and reference checks
 
 Let r=n_treatment/n_control, z_a=Phi^-1(1-alpha/2), z_b=Phi^-1(power).
-Continuous normal approximation: n_control=ceil((z_a+z_b)^2 sigma^2(1+1/r)/delta^2).
-Binary pooled-null/unpooled-alternative approximation: q=(p0+r*p1)/(1+r);
+Continuous n_control=ceil((z_a+z_b)^2 sigma^2(1+1/r)/delta^2).
+Binary q=(p0+r*p1)/(1+r),
 n_control=ceil([z_a sqrt(q(1-q)(1+1/r)) +
 z_b sqrt(p0(1-p0)+p1(1-p1)/r)]^2/(p1-p0)^2).
-n_treatment=ceil(r*n_control); report actual rounded ratio. Both are planning
-approximations, two-sided independent samples; no continuity correction, no claim
-of exact power. Recheck achieved approximation after rounding in implementation.
-Feasible iff total<=pool. For 1:1 continuous, sigma=1, delta=.5, alpha=.05, power=.8
-gives 63 per arm; binary p0=.10,p1=.12 gives 3841 per arm under this formula.
-These reference values require independent verification when implementing the
-engine; no calculator is delivered in this increment.
+n_treatment=ceil(r*n_control), with minimum 2 per arm. Report actual rounded ratio.
+Re-evaluate two-sided normal power after rounding; at most 64 upward corrections
+of max(1,ceil(.001*n_control)) are permitted before calculation_limit.
+Operational bounds protect against underflow/overflow. Reference tests compare
+against Statsmodels: sigma=1, delta=.5 gives 63/arm; complete demo gives 1570/arm.
 
-## Verification and next increments
+## Production configuration
 
-1. Current: validate contracts, missing values, evidence, conflicts, error mapping,
-   rate/body limits, provider SDK request/response handling, UI workflow and build.
-2. Current: design generation, visible suggestions, immutable input snapshots,
-   missing-baseline progression, unsupported/unclear states, retry/back/edit flow.
-3. SciPy-based statistics with independently verified reference tests.
-4. Critique, contradiction checks, Markdown export.
-5. ~20 synthetic evaluation cases, real model scoring, production hardening and
-   deployment. Track schema %, extraction accuracy, risk recall, unsupported
-   assumptions, valid tool calls, median/p95 latency, cost; no scores claimed yet.
+Production mode requires an HTTPS origin allowlist and shared Redis REST quotas.
+The atomic script uses Redis time, a sliding 60-second request window, 75-second
+concurrency leases and a UTC daily request cap. Limits survive process restarts.
+Quota errors fail closed with 503; exhausted caps return 429. Per-process limits
+remain as a first guard. No untrusted forwarded client addresses are used.
+See docs/deployment.md for free-hosting and verification requirements.

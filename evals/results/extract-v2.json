@@ -1,0 +1,3444 @@
+{
+  "mode": "live_openai",
+  "started_at": "2026-11-23T13:18:29.087762+00:00",
+  "model": "gpt-4.1-mini",
+  "limitations": [
+    "Small synthetic development set, not a held-out benchmark or user validation.",
+    "Risk keyword recall is an automated proxy; evidence accuracy and reasoning need human review.",
+    "Extraction accuracy measures only the annotated fields; it is not overall semantic accuracy.",
+    "Schema success counts stages that succeeded after bounded repair, not first-pass validity.",
+    "Unsupported cases are critic quality probes outside the gated application workflow.",
+    "No claim that assignment quality thresholds are achieved from keyword scoring alone."
+  ],
+  "metrics": {
+    "cases": 20,
+    "completed_cases": 20,
+    "validated_stage_rate": 1.0,
+    "annotated_extraction_accuracy": 1.0,
+    "risk_keyword_recall_proxy": 1.0,
+    "design_family_accuracy": 1.0,
+    "median_case_seconds": 14.3105,
+    "p95_case_seconds": 17.792,
+    "known_input_tokens": 69084,
+    "known_output_tokens": 19098,
+    "estimated_cost_usd": null
+  },
+  "cases": [
+    {
+      "id": "complete-continuous",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 3198,
+          "attempts": 1,
+          "input_tokens": 1378,
+          "output_tokens": 124,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 14284,
+          "attempts": 1,
+          "input_tokens": 750,
+          "output_tokens": 323,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 8331,
+          "attempts": 1,
+          "input_tokens": 1328,
+          "output_tokens": 509,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending compared to generic promotions.",
+        "treatment": "Personalized promotions tailored to individual customer preferences.",
+        "control": "Generic, non-personalized promotions given to customers.",
+        "randomization_unit": "Individual customer",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days from promotion assignment",
+        "allocation": "1:1",
+        "rationale": "Randomizing customers individually into personalized vs. generic promotion groups allows clear attribution of differences in average card spending to the promotion type. The 30-day observation window captures post-promotion spending behavior. Average card spending is a continuous metric measured in USD units. Equal allocation maximizes power for a fixed population size.",
+        "assumptions": [
+          "Eligible customers are mutually independent and stable over the observation period.",
+          "There is no interference between customers, i.e., one customer's assignment does not affect another's spending.",
+          "Baseline mean and standard deviation of card spending are accurate and representative for the population.",
+          "Relative uplift target of 5% is meaningful for business impact and detectable within the sample size and variance."
+        ],
+        "open_questions": [
+          "Are there any planned eligibility criteria beyond the stated population size?",
+          "Should additional metrics or secondary outcomes be tracked?",
+          "Is any censoring or attrition expected during the 30-day period?",
+          "Are there business constraints on minimum detectable effect or on allocation ratios?"
+        ],
+        "limitations": [
+          "Design assumes no cluster effects or interference; may not capture social or network effects.",
+          "Fixed-horizon design does not allow sequential monitoring or early stopping.",
+          "Only two arms included; no testing of alternative personalized strategies or promotion intensities."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-complete-continuous",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The experiment design broadly matches the statistical assumptions and objective, with a valid randomized two-arm design testing personalized versus generic promotions on average card spending over 30 days at the individual level. Key statistical inputs such as baseline mean, standard deviation, allocation, and sample size align with confirmed assumptions. However, some risks arise from potential interference, attrition, metric clarity, and open design questions that remain unresolved.",
+        "risks": [
+          {
+            "category": "Interference risk",
+            "severity": "medium",
+            "evidence": "Design assumption states 'no interference between customers', yet personalized promotions could cause social influence or network effects affecting spending.",
+            "explanation": "If customers influence each other's spending through social or household connections, the independence assumption is violated, potentially biasing effect estimates or inflating variance.",
+            "recommendation": "Assess potential interference via sensitivity analyses or design modifications (e.g., clustering or network-aware randomization) if social influence is expected."
+          },
+          {
+            "category": "Attrition and censoring risk",
+            "severity": "medium",
+            "evidence": "Open question asks if any censoring or attrition is expected over 30 days, but no allowance is made in sample size calculations or design.",
+            "explanation": "Unaccounted attrition reduces analyzable sample size and power; differential attrition between arms may bias results.",
+            "recommendation": "Plan for attrition by increasing sample size or monitoring dropout and performing intention-to-treat analyses."
+          },
+          {
+            "category": "Metric definition and consistency risk",
+            "severity": "low",
+            "evidence": "Primary metric is average card spending measured over 30 days, but there is no detail on whether spending outside this window or multiple transactions are aggregated uniformly across arms.",
+            "explanation": "Differences in exposure or spending patterns if windows or aggregation differ can bias comparisons.",
+            "recommendation": "Ensure consistent exposure windows and clear metric definitions applied identically to both arms."
+          },
+          {
+            "category": "Eligibility criterion risk",
+            "severity": "low",
+            "evidence": "Open question about additional eligibility criteria besides 100,000 customers; eligibility affects generalizability and baseline metric accuracy.",
+            "explanation": "If eligibility criteria are complex or inconsistent, baseline mean and SD may not represent final analysis set, affecting power calculations and interpretation.",
+            "recommendation": "Clarify and finalize eligibility criteria prior to launching and confirm assumptions with observed baseline data."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Are there any planned eligibility criteria beyond the stated population size?",
+          "Should additional metrics or secondary outcomes be tracked?",
+          "Is any censoring or attrition expected during the 30-day period?",
+          "Are there business constraints on minimum detectable effect or on allocation ratios?"
+        ]
+      },
+      "risk_hits": 0,
+      "risk_checks": 0,
+      "numbers_preserved": true,
+      "latency_seconds": 25.815
+    },
+    {
+      "id": "campaign-overlap",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2097,
+          "attempts": 1,
+          "input_tokens": 1394,
+          "output_tokens": 124,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4791,
+          "attempts": 1,
+          "input_tokens": 766,
+          "output_tokens": 364,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 7225,
+          "attempts": 1,
+          "input_tokens": 1386,
+          "output_tokens": 547,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending compared to generic promotions.",
+        "treatment": "Personalized promotion campaign targeting individual customer preferences.",
+        "control": "Generic promotion campaign with standard offers for all customers.",
+        "randomization_unit": "Individual customer",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days post-randomization",
+        "allocation": "1:1",
+        "rationale": "Randomizing individual customers equally to personalized or generic promotions allows unbiased estimation of the effect on average card spending over a 30-day period. Average card spending is a continuous metric representing customer spend, measured over the test duration. The baseline mean and variability provide context for expected spending and variation. The presence of an untracked separate cashback campaign during the test introduces potential confounding but exposure data is unavailable, so it must be acknowledged as a limitation.",
+        "assumptions": [
+          "Customers are eligible and can be randomized independently.",
+          "Randomization is effective, and the 1:1 allocation is adhered to.",
+          "Average card spending over 30 days captures the effect of the promotion.",
+          "The untracked cashback campaign affects both groups similarly or its impact is negligible or random.",
+          "No interference or spillover effects between treatment and control groups."
+        ],
+        "open_questions": [
+          "Is there any information about differential exposure or timing related to the separate cashback campaign?",
+          "Is it possible to track any loyalty or prior behavior covariates for adjustment?",
+          "What is the desired minimum detectable effect size or power for confirming the uplift?",
+          "Are there any business constraints for unequal allocation or stopping criteria?"
+        ],
+        "limitations": [
+          "Separate cashback campaign exposure is unknown, which may confound results.",
+          "No tracking of crossover or noncompliance is described.",
+          "Only a single time window (30 days) considered; longer-term effects unknown.",
+          "The experiment assumes independence and no interference among customers."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-campaign-overlap",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed experiment tests personalized versus generic promotions using individual-level randomization and average card spending over 30 days, consistent with statistical inputs and assumptions. However, the presence of a simultaneous untracked cashback campaign poses a significant risk of confounding. Key design aspects such as randomization, allocation, and outcome measurement align well with the confirmed assumptions. Several unresolved questions on exposure to cashback, potential covariate adjustment, and desired power settings remain.",
+        "risks": [
+          {
+            "category": "Confounding",
+            "severity": "high",
+            "evidence": "The design acknowledges a concurrent cashback campaign with unknown exposure and no tracking of customers' exposure to it.",
+            "explanation": "If cashback exposure differs systematically between treatment and control groups or interacts with the promotion, it could bias the estimated effect of personalized promotions on spending.",
+            "recommendation": "Attempt to track cashback campaign exposure or exclude customers known to be affected; otherwise, interpret results cautiously and consider sensitivity analyses."
+          },
+          {
+            "category": "Randomization/Unit Mismatch",
+            "severity": "low",
+            "evidence": "Randomization is at the individual customer level and the primary metric is individual average card spending, with design confirming independent units and allocation ratio 1:1.",
+            "explanation": "This alignment minimizes risk of bias from unit mismatch but assumes no interference or spillover effects among customers.",
+            "recommendation": "Verify absence of interference; if present, reconsider design or analysis model to account for spillovers."
+          },
+          {
+            "category": "Exposure Measurement",
+            "severity": "medium",
+            "evidence": "Only a single 30-day observation window is used, and exposure or timing of the cashback campaign relative to the promotions is unknown.",
+            "explanation": "Unmeasured differences in timing or intensity of exposure to cashback campaign could differentially affect spending during the observation period and confound results.",
+            "recommendation": "Collect detailed exposure timing data if possible or extend observation windows; consider staggered designs or post-hoc adjustments if relevant data become available."
+          },
+          {
+            "category": "Unmeasured Covariates/Adjustment",
+            "severity": "medium",
+            "evidence": "No information provided on collecting or adjusting for loyalty or prior customer behavior covariates, which can impact spending variability and residual confounding.",
+            "explanation": "Adjusting for baseline behavior could improve precision and reduce bias if randomization imbalance occurs or untracked campaigns affect some segments disproportionately.",
+            "recommendation": "If data available, include relevant covariates in analysis to increase robustness; otherwise, report limitations due to potential residual confounding."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Differential exposure or timing differences related to the separate cashback campaign are unknown",
+          "No information on availability of loyalty or prior behavior covariates for adjustment",
+          "Desired minimum detectable effect size and power beyond those calculated are unclear",
+          "No input on possible business constraints affecting allocation ratio or early stopping criteria"
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 14.116
+    },
+    {
+      "id": "selection-bias",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2566,
+          "attempts": 1,
+          "input_tokens": 1396,
+          "output_tokens": 147,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3800,
+          "attempts": 1,
+          "input_tokens": 768,
+          "output_tokens": 247,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 4257,
+          "attempts": 1,
+          "input_tokens": 1234,
+          "output_tokens": 345,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": null,
+        "primary_metric": "average card spending",
+        "observation_period": null,
+        "allocation": null,
+        "rationale": "The objective specifies assigning high-value customers to treatment and low-value customers to control, which is a form of deterministic assignment rather than randomization. This violates the key requirement for independent two-arm randomized experiments that customers be independently randomized. As such, a valid randomized experiment design cannot be drafted from the described approach.",
+        "assumptions": [
+          "Eligible customers are distinguishable by value for treatment assignment but this introduces confounding bias.",
+          "Randomization is critical to establish causal inference; without it, estimated treatment effects may be biased."
+        ],
+        "open_questions": [
+          "Is it possible to randomize customers rather than assign deterministically by value?",
+          "Can you provide criteria or thresholds for defining high-value and low-value customers?",
+          "Are there plans to adjust for confounding variables introduced by deterministic assignment?"
+        ],
+        "limitations": [
+          "Deterministic assignment prevents unbiased causal effect estimation typical in randomized designs.",
+          "Potential confounding due to customer value leading to biased or invalid conclusions.",
+          "Sample size and power calculations for a randomized design cannot be performed under deterministic assignment."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-selection-bias",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed design assigns treatment deterministically based on customer value instead of independent randomization, violating core assumptions for unbiased causal inference and rendering standard sample size and power calculations invalid.",
+        "risks": [
+          {
+            "category": "Selection Bias",
+            "severity": "high",
+            "evidence": "High-value customers are assigned exclusively to treatment and low-value customers to control, not randomized.",
+            "explanation": "This deterministic assignment creates systematic differences between groups beyond treatment effect, confounding the estimate of promotion impact on spending.",
+            "recommendation": "Adopt independent randomization of customers into treatment and control arms to ensure comparability and unbiased effect estimates."
+          },
+          {
+            "category": "Confounding Bias",
+            "severity": "high",
+            "evidence": "Customer value correlates with expected spending and is confounded with treatment status due to deterministic assignment.",
+            "explanation": "Observed differences in average spending may be due to underlying value differences rather than the promotion intervention.",
+            "recommendation": "Use random assignment or statistical adjustment methods (e.g., matching, regression) if deterministic assignment must be used, although this departs from classical randomized design assumptions."
+          },
+          {
+            "category": "Invalid Statistical Assumptions",
+            "severity": "high",
+            "evidence": "Statistics request confirms design is unsupported due to lack of independent units and deterministic assignment.",
+            "explanation": "Sample size, power, and hypothesis testing formulas assume randomization and independent units; these do not hold here, making inference unreliable.",
+            "recommendation": "Redesign experiment with randomization or consider alternative specialized causal inference methods for observational comparisons."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Is it feasible to randomize customers rather than assign deterministically by value?",
+          "What precise criteria or thresholds define high-value and low-value customers?",
+          "Are there plans to statistically adjust for confounding arising from deterministic assignment?"
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 10.623
+    },
+    {
+      "id": "post-treatment-filter",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 1995,
+          "attempts": 1,
+          "input_tokens": 1390,
+          "output_tokens": 124,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 5349,
+          "attempts": 1,
+          "input_tokens": 762,
+          "output_tokens": 358,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 7105,
+          "attempts": 1,
+          "input_tokens": 1367,
+          "output_tokens": 642,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending compared to generic promotions.",
+        "treatment": "Personalized promotion assigned to customers.",
+        "control": "Generic promotion assigned to customers.",
+        "randomization_unit": "Individual customer.",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days after promotion assignment.",
+        "allocation": "1:1 randomization between treatment and control groups.",
+        "rationale": "The independent two-arm design randomly assigns each customer to receive either a personalized or generic promotion over a fixed 30-day period. Average card spending is measured in USD per customer, capturing the treatment effect on spending behavior. Excluding customers not opening the offer focuses analysis on those exposed to the promotion.",
+        "assumptions": [
+          "Customers are independent and can be randomized individually.",
+          "Offer opening accurately proxies exposure, warranting exclusion of non-openers.",
+          "Customer behavior remains stable outside of the promotion effect during the 30-day period.",
+          "No interference between customers across treatment arms."
+        ],
+        "open_questions": [
+          "Should the analysis adjust for any covariates to improve precision?",
+          "How is 'opening the offer' tracked and confirmed?",
+          "Are there subpopulations for which effect heterogeneity is expected?",
+          "What statistical significance threshold and power are desired for sample size planning?",
+          "Should missing spending data be handled with imputation or exclusion?"
+        ],
+        "limitations": [
+          "Excluding customers who never open the offer may introduce selection bias, as these customers are non-randomly excluded after randomization.",
+          "Non-compliance (not opening offer) may dilute intent-to-treat effect estimates.",
+          "Baseline mean, standard deviation, and target uplift are given, but sample size calculation and power analysis are not performed here.",
+          "Results are limited to 30-day spending and may not capture longer-term effects."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-post-treatment-filter",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed two-arm individual randomized experiment aims to measure the effect of personalized versus generic promotions on average card spending over 30 days, excluding customers who never open their assigned offer. The design aligns well with the confirmed statistical inputs and assumptions for sample size and power calculation. However, excluding non-openers post-randomization raises concerns about selection bias and complicates causal interpretation of the estimand. Several operational and analytical clarifications remain open.",
+        "risks": [
+          {
+            "category": "Selection Bias",
+            "severity": "high",
+            "evidence": "Proposal states excluding customers who never open the assigned offer from analysis after randomization.",
+            "explanation": "Excluding non-openers post-randomization conditions on a post-treatment variable that may be affected by treatment or correlated with potential outcomes, violating randomization balance and biasing estimates away from the intent-to-treat effect.",
+            "recommendation": "Analyze all randomized customers under intent-to-treat principle; consider exploratory complier average causal effect (CACE) analysis or use offer opening only as a stratification or covariate, not exclusion criterion."
+          },
+          {
+            "category": "Misalignment of Estimand and Analysis",
+            "severity": "medium",
+            "evidence": "Primary metric is average card spending with 1:1 randomization at individual level; analysis excludes non-openers defined by offer opening status.",
+            "explanation": "Excluding non-openers changes the analysis from population-level average treatment effect to a selected subgroup effect, which may not be generalizable or unbiased for the broader population targeted by the promotion.",
+            "recommendation": "Define clearly the estimand (ITT vs. effect on openers), maintain randomization integrity by including all customers, or justify and replicate exclusion impact with sensitivity analyses."
+          },
+          {
+            "category": "Outcome Measurement Ambiguity",
+            "severity": "medium",
+            "evidence": "Offer opening is used as exclusion criterion; 'How is opening tracked and confirmed?' is an open question.",
+            "explanation": "If offer opening is measured with error, lag, or inconsistently, misclassification could bias subgroup definitions and treatment effect estimates, especially when used to exclude participants.",
+            "recommendation": "Define and validate the method for tracking offer opening precisely before analysis; consider incorporating imperfect compliance measurement uncertainty in the design."
+          },
+          {
+            "category": "Potential Confounding From External Factors",
+            "severity": "low",
+            "evidence": "Assumption that customer behavior remains stable outside promotion effect during 30-day window without explicit control for time or external events.",
+            "explanation": "If concurrent marketing campaigns or external influences affect spending unevenly across arms or time, it may bias estimates or inflate variance.",
+            "recommendation": "Monitor and adjust for concurrent campaigns or temporal trends if possible; consider covariate adjustment or stratification if heterogeneity is suspected."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Offer opening is a valid and reliably measured proxy for exposure to the promotion.",
+          "No differential attrition or missing spending data bias post-exclusion of non-openers.",
+          "No interference exists between customers (SUTVA holds) in terms of promotion influence.",
+          "Statistical significance threshold and power parameters are fixed as alpha=0.05 and power=0.8 as confirmed but should be revalidated by stakeholders.",
+          "Covariate adjustment strategy and handling of missing spending data remain undefined and may affect precision and bias."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 14.45
+    },
+    {
+      "id": "unequal-exposure",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2617,
+          "attempts": 1,
+          "input_tokens": 1393,
+          "output_tokens": 123,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3606,
+          "attempts": 1,
+          "input_tokens": 765,
+          "output_tokens": 304,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 8149,
+          "attempts": 1,
+          "input_tokens": 1323,
+          "output_tokens": 693,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending compared to generic promotions.",
+        "treatment": "Send three personalized promotion messages over 30 days.",
+        "control": "Send one generic promotion message over 30 days.",
+        "randomization_unit": "Individual eligible customers",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days after first message",
+        "allocation": "1:1 equal randomization",
+        "rationale": "Randomizing individual customers to personalized vs generic promotions allows a direct comparison isolating the effect of personalization. Using 30 days captures spending behavior following messaging. Average card spending is measured in USD over this period. Treatment sends thrice as many messages to ensure any uplift is due to personalization, not message frequency.",
+        "assumptions": [
+          "Sending more messages in treatment arm does not itself drive spending increases independent of personalization.",
+          "Customers do not receive promotions outside the assigned condition during observation period.",
+          "Spending behavior is stable and measurable over 30 days post exposure.",
+          "Sample size planning will be done separately to confirm sufficient power given baseline mean and SD."
+        ],
+        "open_questions": [
+          "Is there control of exposure to non-assigned promotions or marketing during the 30-day period?",
+          "Is the timing and content of messages additionally matched aside from personalization?",
+          "Should any adjustments be made for multiple messaging frequency differences in analysis?"
+        ],
+        "limitations": [
+          "Unequal message frequency between arms confounds isolation of personalization effect.",
+          "Does not account for potential differential response timing within 30 days.",
+          "Cluster or repeated measures effects are not addressed."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-unequal-exposure",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The experiment aims to isolate the effect of personalization on average card spending by comparing a treatment with three personalized messages against a control with one generic message, randomized individually over 30 days. However, the key design deviation is unequal messaging frequency between arms, which confounds conclusions about personalization alone. The statistical assumptions align with a standard independent two-arm test on continuous outcomes with fixed horizon and equal allocation; sample size and power appear appropriate. Several unresolved assumptions and limitations remain about concurrent promotion exposure and the handling of differential messaging frequency in analysis.",
+        "risks": [
+          {
+            "category": "Confounding",
+            "severity": "high",
+            "evidence": "Treatment arm receives three messages, control one message; the design rationale admits message frequency difference may induce spending uplift independent of personalization.",
+            "explanation": "Unequal messaging frequency biases the primary metric, making it impossible to attribute any observed spending increase solely to personalization effects rather than increased promotional contact.",
+            "recommendation": "Match messaging frequency across arms or implement analytic adjustments to control for exposure frequency to isolate personalization effects."
+          },
+          {
+            "category": "Selection/Randomization Contamination",
+            "severity": "medium",
+            "evidence": "Open questions about control of exposure to non-assigned promotions or marketing during the 30-day period remain unresolved.",
+            "explanation": "If customers receive external or unassigned promotions during the observation window, this could contaminate the response and bias estimates of personalization effect.",
+            "recommendation": "Implement strict control or monitoring of promotion exposure outside assigned conditions during the experiment period, or measure and adjust for such exposures in analysis."
+          },
+          {
+            "category": "Metric Ambiguity",
+            "severity": "medium",
+            "evidence": "Primary metric is average card spending over 30 days, which does not account for potential differential timing of spending response by arm.",
+            "explanation": "Aggregating spending over 30 days may mask differences in spend dynamics, such as delayed or transient effects differing by personalization and frequency, reducing sensitivity or biasing effect size estimates.",
+            "recommendation": "Consider analyzing spending trajectories or using time-to-event/spending metrics or adjust the observation window to capture differential response timing."
+          },
+          {
+            "category": "Analysis Validity",
+            "severity": "medium",
+            "evidence": "Assumptions specify independent units with no clustering or repeated measures, but multiple messages in treatment may induce correlated responses within individuals.",
+            "explanation": "Multiple message exposures can create within-unit repeated measurements or dependencies not accounted for, violating independence assumptions and potentially underestimating variance.",
+            "recommendation": "Ensure outcome measurement method aggregates spending at the individual level over the observation period or use models that adjust for within-person correlation if individual message-level data are analyzed."
+          },
+          {
+            "category": "Open Design Questions",
+            "severity": "low",
+            "evidence": "Open questions remain about matching timing/content of messages aside from personalization and analytic adjustments for multiple message frequency differences.",
+            "explanation": "Differences in message timing or content other than personalization may introduce unintended biases; analytic plans lacking adjustment for exposure differences weaken result validity.",
+            "recommendation": "Clarify and standardize non-personalization message attributes and pre-specify analytic methods to adjust for exposure frequency differences."
+          }
+        ],
+        "unresolved_assumptions": [
+          "No contamination from concurrent marketing outside assigned promotions during observation window.",
+          "Relative messaging frequency difference does not independently affect spending unless specifically adjusted or controlled.",
+          "Spending behavior and baseline standard deviation are stable and consistent across arms and over 30 days.",
+          "Analysis approach accounts appropriately for multiple message exposures in treatment arm as aggregated individual-level outcomes.",
+          "No differential attrition or missing data affecting outcome measurement.",
+          "No temporal or behavioral interference between customers influencing spending in either arm."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 14.373
+    },
+    {
+      "id": "attrition",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 3397,
+          "attempts": 1,
+          "input_tokens": 1389,
+          "output_tokens": 123,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4452,
+          "attempts": 1,
+          "input_tokens": 761,
+          "output_tokens": 292,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 6059,
+          "attempts": 1,
+          "input_tokens": 1301,
+          "output_tokens": 422,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending compared to generic promotions.",
+        "treatment": "Personalized promotions offered to customers.",
+        "control": "Generic promotions offered to customers.",
+        "randomization_unit": "Individual customer.",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days after randomization.",
+        "allocation": "1:1 randomization between personalized and generic promotions.",
+        "rationale": "Randomizing individual customers equally allows comparison between personalized and generic promotions on average spending over a fixed 30-day period. The continuous metric 'average card spending' matches the baseline statistics provided and aligns with the two-sided fixed-horizon comparison.",
+        "assumptions": [
+          "Missing outcome data (30%) is missing completely at random or is accounted for in analysis.",
+          "Eligibility and randomization processes are correctly implemented at the customer level.",
+          "Customers assigned to treatment receive the intended promotion type.",
+          "Average card spending is stable and well captured within the 30-day window."
+        ],
+        "open_questions": [
+          "How should missing outcome data be handled in the analysis?",
+          "Is the 30-day observation period sufficient to capture the promotion impact fully?",
+          "Are there any stratification variables or covariates to consider for randomization or analysis?"
+        ],
+        "limitations": [
+          "The design does not address potential bias from missing data beyond randomization.",
+          "No adjustment is planned for possible customer heterogeneity beyond random assignment.",
+          "Sample size planning and power analysis pending given the baseline metrics and target uplift."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-attrition",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed experiment is a straightforward two-arm individually randomized test of personalized vs. generic promotions on average card spending over 30 days, aligned with the calculator assumptions. However, 30% missing outcome data with no detailed handling plan and potential heterogeneity raise moderate risks. The absence of adjustment for missingness, no discussion of stratification or covariates, and unclear sufficiency of the 30-day window may threaten validity if these issues materialize.",
+        "risks": [
+          {
+            "category": "Missing Data",
+            "severity": "high",
+            "evidence": "The design acknowledges 30% missing outcome data but leaves its handling open and assumes MCAR or accounting in analysis without specification.",
+            "explanation": "If missingness is related to treatment or spending, ignoring or improper handling can bias effect estimates and reduce power.",
+            "recommendation": "Pre-specify and implement appropriate missing data methods (e.g., multiple imputation or sensitivity analyses) and assess missingness mechanisms."
+          },
+          {
+            "category": "Potential Bias from Customer Heterogeneity",
+            "severity": "medium",
+            "evidence": "The design does not include adjustments for covariates or stratification despite possible customer-level variability in spending.",
+            "explanation": "Ignoring heterogeneity may reduce precision or obscure subgroup differences affecting interpretation.",
+            "recommendation": "Consider including baseline covariates or stratification in analysis to increase power and robustness if feasible."
+          },
+          {
+            "category": "Observation Window Sufficiency",
+            "severity": "medium",
+            "evidence": "The design fixes a 30-day observation period but questions whether this fully captures promotion impact remain open.",
+            "explanation": "If the promotion effect manifests outside this window, the chosen horizon may underestimate impact, biasing estimates.",
+            "recommendation": "Review prior data or pilot results to justify 30 days as sufficient; consider extending or monitoring outcomes beyond 30 days."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Missing data are missing completely at random or properly accounted for in analysis.",
+          "Randomization and eligibility processes are correctly implemented per individual customer.",
+          "All assigned customers receive the assigned promotion type without contamination.",
+          "Average card spending metric effectively captures the promotion effect within 30 days.",
+          "No interference exists between customers affecting their spending outcomes."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 13.909
+    },
+    {
+      "id": "heavy-tail",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2315,
+          "attempts": 1,
+          "input_tokens": 1393,
+          "output_tokens": 127,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3839,
+          "attempts": 1,
+          "input_tokens": 765,
+          "output_tokens": 301,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 11638,
+          "attempts": 1,
+          "input_tokens": 1316,
+          "output_tokens": 604,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "Primary metric is average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending by at least 5% compared to generic promotions.",
+        "treatment": "Personalized promotion offer",
+        "control": "Generic promotion offer",
+        "randomization_unit": "Individual customer",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days from randomization",
+        "allocation": "1:1",
+        "rationale": "Individual customers are randomized equally to treatment or control to isolate the effect of personalized promotions on spending. The primary metric is average card spending per customer measured over 30 days to capture spending behavior during the promotional period. The two-sided fixed-horizon allows testing for any difference in spending. Skewness and extreme values in spending may affect variance and downstream sample size requirements.",
+        "assumptions": [
+          "Spending during the 30-day period captures the promotional impact adequately.",
+          "Customers are independent with no interference between treatment arms.",
+          "Randomization is successful in balancing covariates across arms."
+        ],
+        "open_questions": [
+          "Are there plans to address or transform skewed spending data in analysis?",
+          "Is there an upper limit or truncation planned for extreme spenders?",
+          "What sample size or power target is aimed for, given baseline parameters?",
+          "Is data available to verify randomization feasibility and compliance?"
+        ],
+        "limitations": [
+          "Skewed spending distribution may reduce precision and complicate analysis.",
+          "Extreme spenders dominate averages which might bias results or increase variance.",
+          "Non-normality violates some usual parametric test assumptions; alternatives or transformations may be needed."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-heavy-tail",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The experimental design is fundamentally aligned with the objective and confirmed statistical inputs, with a straightforward two-arm individual randomization comparing personalized versus generic promotions in terms of average card spending. However, the heavy skewness and presence of extreme spenders challenge the normality and variance assumptions underlying the power calculation and analysis method. No explicit plan for handling skewed data or outliers is stated. Additional concerns involve the potential sensitivity of the mean metric to outliers and the lack of information on compliance or data quality checks.",
+        "risks": [
+          {
+            "category": "Analysis Validity",
+            "severity": "high",
+            "evidence": "Spending is heavily skewed with a few extreme spenders dominating the average; baseline SD is large relative to mean; parametric normal approximation assumed in power calculation and analysis.",
+            "explanation": "The normality and variance homogeneity assumptions required for standard parametric tests and sample size formulas are violated by the heavy-tailed spending distribution. This can lead to incorrect inference, inflated Type I error, or reduced power. The mean metric can be overly influenced by extreme values.",
+            "recommendation": "Consider non-parametric or robust statistical methods, or apply data transformations (e.g. log, trimming, winsorization). Pre-specify strategies to handle skewness and outliers in the analysis plan."
+          },
+          {
+            "category": "Metric Appropriateness",
+            "severity": "medium",
+            "evidence": "Primary metric is average spending despite known skewness and dominance by extreme spenders.",
+            "explanation": "Use of the mean average as a primary metric in heavy-tailed data can misrepresent typical customer behavior and amplify variance, potentially obscuring true effects or driving misleading conclusions.",
+            "recommendation": "Evaluate complementary metrics such as median spending, quantile-based measures, or proportion of spenders exceeding thresholds. Justify the choice of average spending given data characteristics."
+          },
+          {
+            "category": "Randomization Validity",
+            "severity": "medium",
+            "evidence": "Assumption that randomization balances covariates, but no explicit plans for monitoring randomization compliance or pre/post balance checks.",
+            "explanation": "Without verification of randomization fidelity and covariate balance, selection bias or implementation deviations may bias results.",
+            "recommendation": "Implement randomization checks, stratification or blocking if needed, and document compliance and balance diagnostics before unblinded analysis."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Plan for handling skewed spending distribution and extreme outliers in statistical analysis remains unspecified.",
+          "No mention of data quality assurance, randomization compliance monitoring, or attrition/data missingness evaluation.",
+          "Effect of skewness on sample size and power assumptions needs empirical validation or adjustments.",
+          "No clarification on whether any truncation or winsorization is planned for spending data."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 17.792
+    },
+    {
+      "id": "metric-window",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2167,
+          "attempts": 1,
+          "input_tokens": 1394,
+          "output_tokens": 128,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4822,
+          "attempts": 1,
+          "input_tokens": 766,
+          "output_tokens": 345,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 7290,
+          "attempts": 1,
+          "input_tokens": 1357,
+          "output_tokens": 570,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "Primary metric is average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "the target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending compared to generic promotions.",
+        "treatment": "Personalized promotion offers delivered to eligible customers.",
+        "control": "Generic promotion offers delivered to eligible customers.",
+        "randomization_unit": "Individual customer",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days after randomization for both treatment and control groups",
+        "allocation": "1:1 equal randomization",
+        "rationale": "A fixed-horizon two-arm experiment randomly allocates customers individually to personalized vs. generic promotions to estimate average spending difference. The primary metric is average card spending measured over 30 days post-randomization to capture full treatment effect. Equal allocation maximizes power for a fixed sample size. Continuous spending metric allows standard comparison tests.",
+        "assumptions": [
+          "Customers are independent units without interference between treatment groups.",
+          "Measurement of spending is accurate and consistently recorded over the 30-day period.",
+          "The baseline mean and standard deviation provided are stable and representative."
+        ],
+        "open_questions": [
+          "Are customers randomized once and tracked for the full 30 days for both arms?",
+          "Should spending in control also be measured for 30 days to ensure comparable metrics, since current input states 7 days for control?",
+          "Is there any reason to adjust allocation ratio from 1:1?",
+          "Are there covariates available for stratification or adjustment to improve power?"
+        ],
+        "limitations": [
+          "Differing observation periods for treatment (30 days) and control (7 days) spending may bias comparison\u2014description states conflicting measurement windows.",
+          "Design assumes no interference or spillover effects between customers.",
+          "No information on customer segmentation or variability beyond baseline mean and SD is provided, limiting personalized promotion targeting insight."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-metric-window",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The experiment design mostly aligns with the confirmed statistical inputs, but there is a critical conflict in the measurement windows between treatment and control groups which risks biasing the primary metric comparison.",
+        "risks": [
+          {
+            "category": "Measurement Bias",
+            "severity": "high",
+            "evidence": "Objective states measure treatment spending for 30 days but control spending for only 7 days, while the design claims 30 days measurement for both groups.",
+            "explanation": "The inconsistent observation periods make the average card spending metric incomparable between groups. Treatment spending over 30 days will naturally appear higher than control spending over only 7 days, confounding true treatment effect estimation.",
+            "recommendation": "Harmonize the measurement windows so that control and treatment spending are both measured over the same 30-day period, as stated in the design rationale and statistical assumptions."
+          },
+          {
+            "category": "Unclear Experimental Tracking",
+            "severity": "medium",
+            "evidence": "Open question about whether customers are randomized once and tracked for the full 30 days in both arms.",
+            "explanation": "If customers are not consistently tracked across the full observation window, partial or varying exposure times could induce bias or increased variance in estimates.",
+            "recommendation": "Confirm single randomization per customer with complete 30-day post-randomization tracking in both arms to ensure comparable exposure and data completeness."
+          },
+          {
+            "category": "Potential Interference",
+            "severity": "medium",
+            "evidence": "Design assumption states no interference or spillover effects between customers.",
+            "explanation": "Personalized promotions could influence behaviors in nearby customers (e.g., via social networks), violating independence and biasing estimates.",
+            "recommendation": "Assess risk of interference by customer network analysis or implement cluster randomization if interference is likely."
+          },
+          {
+            "category": "Covariate Adjustment Opportunity",
+            "severity": "low",
+            "evidence": "Open question on availability of covariates for stratification or adjustment.",
+            "explanation": "Adjusting for baseline covariates can increase power and precision but was not addressed in design or statistical inputs.",
+            "recommendation": "If covariates are available, pre-specify adjustment methods to improve power and control variance."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Whether spending measurement in control group is actually limited to 7 days or matches treatment at 30 days.",
+          "Whether customers are randomized once and tracked continuously for 30 days in both arms.",
+          "Whether interference or spillovers between customers truly do not exist.",
+          "Availability of relevant covariates for adjustment or stratification."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 14.28
+    },
+    {
+      "id": "multiple-metrics",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2858,
+          "attempts": 1,
+          "input_tokens": 1394,
+          "output_tokens": 122,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4411,
+          "attempts": 1,
+          "input_tokens": 766,
+          "output_tokens": 366,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 8475,
+          "attempts": 1,
+          "input_tokens": 1355,
+          "output_tokens": 556,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": null,
+        "primary_metric": "average card spending",
+        "observation_period": "30 days",
+        "allocation": "1:1",
+        "rationale": "The experiment involves independently randomizing 100,000 customers equally to personalized versus generic promotions and measuring average card spending over 30 days, which aligns with an independent two-arm design. However, the intention to choose any one of 20 outcomes based on significance (multiplicity) introduces multiple comparisons and selective inference issues that cannot be properly handled in a simple two-arm fixed-horizon design. Also, there is no single clearly defined primary metric since 20 outcomes are considered, which violates the single primary outcome assumption. Therefore, this design is unsupported under the current framework due to multiple hypothesis testing and outcome selection concerns.",
+        "assumptions": [
+          "Eligible customers can be randomized independently without interference.",
+          "Average card spending can be reliably measured over 30 days.",
+          "Personalized and generic promotions are deliverable as distinct treatments."
+        ],
+        "open_questions": [
+          "What are the definitions of the 20 outcomes and how are they related to average card spending?",
+          "How should multiple testing and selection of significant results be handled?",
+          "Is there a single pre-specified primary outcome or should multiplicity adjustments be made?",
+          "Should sample size be recalculated accounting for multiple comparisons and chosen target uplift?"
+        ],
+        "limitations": [
+          "Multiple comparison problem due to 20 outcomes considered undermines validity of statistical inference with standard independent two-arm design.",
+          "Selecting whichever outcome shows significance inflates Type I error and requires advanced statistical controls not supported in simple fixed-horizon designs.",
+          "No clear single primary metric stated beyond average card spending, complicating hypothesis definition and analysis.",
+          "The design does not incorporate methods for controlling false discovery rate or family-wise error rate."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-multiple-metrics",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed design aims to randomize 100,000 customers equally to personalized versus generic promotions and analyze average card spending over 30 days. However, considering 20 outcomes and selecting the significant one as primary introduces multiple testing, selective inference, and unclear primary metric issues, invalidating the assumptions of a simple fixed-horizon, two-arm experiment.",
+        "risks": [
+          {
+            "category": "Multiple Testing / Multiplicity",
+            "severity": "high",
+            "evidence": "The objective states that whichever of 20 outcomes has a significant p-value will be chosen as primary result.",
+            "explanation": "This practice inflates the Type I error rate and invalidates standard p-values and confidence intervals from a standard two-arm test without adjustment.",
+            "recommendation": "Pre-specify a single primary outcome or apply appropriate multiplicity correction methods (e.g., Bonferroni, FDR control) or adopt specialized multi-endpoint testing procedures."
+          },
+          {
+            "category": "Undefined Primary Outcome",
+            "severity": "high",
+            "evidence": "No single clearly defined primary metric; 20 outcomes are considered with the 'average card spending' named but multiple others implied.",
+            "explanation": "Lack of a pre-specified primary metric complicates hypothesis definition, sample size justification and interpretability of p-values and confidence intervals.",
+            "recommendation": "Select and fully specify one primary outcome metric to drive sample size and analysis or declare co-primary endpoints with appropriate adjustments."
+          },
+          {
+            "category": "Design Family Mismatch",
+            "severity": "high",
+            "evidence": "Design family marked as 'unsupported' due to multiple outcome selection and multiplicity issues conflicting with the confirmed two-arm fixed-horizon assumptions in the calculator.",
+            "explanation": "Analytic assumptions of independent units, fixed horizon, single primary metric and no multiplicity are violated, undermining validity of sample size and power calculations and inference.",
+            "recommendation": "Revise design to independent two-arm with single pre-specified primary outcome, or use advanced multi-endpoint statistical methods and corresponding sample size calculations."
+          },
+          {
+            "category": "Unresolved Outcome Relations",
+            "severity": "medium",
+            "evidence": "Open questions ask for definitions and relationships of the 20 outcomes to average card spending.",
+            "explanation": "Without knowing the nature and correlation of these outcomes, it is unclear how to adjust for multiplicity or whether outcomes measure distinct aspects of card spending or redundant metrics.",
+            "recommendation": "Clarify all outcome definitions and their relations to enable appropriate multiplicity handling and potentially dimension reduction or composite endpoint derivation."
+          }
+        ],
+        "unresolved_assumptions": [
+          "What exactly the 20 outcomes are and how they relate to average card spending.",
+          "How multiple testing and selection among 20 outcomes will be statistically handled or adjusted for.",
+          "Whether a single pre-specified primary outcome exists or will be defined.",
+          "Whether sample size and power calculations account for multiplicity and the selected effect size."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 15.744
+    },
+    {
+      "id": "household-clusters",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2392,
+          "attempts": 1,
+          "input_tokens": 1394,
+          "output_tokens": 147,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4754,
+          "attempts": 1,
+          "input_tokens": 766,
+          "output_tokens": 323,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 8067,
+          "attempts": 1,
+          "input_tokens": 1313,
+          "output_tokens": 543,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": "household",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days",
+        "allocation": "1:1",
+        "rationale": "The objective specifies randomization at the household level due to strong influence among family members, but the context also requires individual-level sample details. This clustering introduces interference within households and dependency among observations, violating the independence assumption needed for a standard independent two-arm randomized experiment. Therefore, the design requires cluster-randomized trial methods and analytical techniques accounting for intra-cluster correlation, which are outside the supported design scope here.",
+        "assumptions": [
+          "Household members influence each other's behavior strongly, thus justifying household-level randomization.",
+          "The baseline mean, standard deviation, and target uplift provided relate to individual-level spending but may not directly apply at the household level without adjustment.",
+          "Allocation is equal (1:1) between personalized and generic promotions at the household level."
+        ],
+        "open_questions": [
+          "What is the average household size and its distribution within the eligible pool?",
+          "Is there an expected intra-class correlation coefficient (ICC) for spending within households?",
+          "Should sample size planning consider cluster design effects?",
+          "Are there plans to analyze spillover or interference effects beyond household boundaries?"
+        ],
+        "limitations": [
+          "Standard independent two-arm design assumptions are violated due to household-level randomization causing clustering and potential interference.",
+          "Ignoring clustering would bias variance estimates and inference, leading to invalid conclusions.",
+          "This design is not supported because it is inherently a cluster-randomized experiment rather than a simple independent two-arm trial."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-household-clusters",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The experiment design involves cluster (household)-level randomization but uses individual-level baseline parameters assuming independent observations. This mismatch creates significant risks of invalid inference due to clustering and interference.",
+        "risks": [
+          {
+            "category": "Clustering and Randomization Unit Mismatch",
+            "severity": "high",
+            "evidence": "The objective describes randomizing entire households due to strong intra-family influence, but baseline mean and variance are given at the individual level assuming independence.",
+            "explanation": "Randomizing at the household level induces intra-cluster correlation, violating the independent unit assumption required for standard two-arm analysis and sample size calculation, inflating type I and type II error risks.",
+            "recommendation": "Incorporate cluster-randomized trial methods with adjustment for the intra-class correlation coefficient (ICC) in both design and analysis phases or redesign as an individual-level randomized experiment."
+          },
+          {
+            "category": "Sample Size and Effect Size Assumptions",
+            "severity": "high",
+            "evidence": "Baseline mean and standard deviation correspond to individuals, but the chosen design clusters randomization by household without reporting household size distribution or ICC.",
+            "explanation": "Without accounting for average household size and ICC, sample size calculations will be incorrect, leading to under- or over-powered studies and invalid inference.",
+            "recommendation": "Gather household size distribution and estimate ICC to adjust sample size and power calculations appropriately for clustering effects."
+          },
+          {
+            "category": "Interference and Spillover Effects",
+            "severity": "medium",
+            "evidence": "The rationale identifies strong influence among family members, implying possible interference within households which is addressed by cluster randomization, but potential spillover across households is unaddressed.",
+            "explanation": "If interference extends beyond households or if households interact, treatment effects could be contaminated violating the stable unit treatment value assumption (SUTVA).",
+            "recommendation": "Assess and document possible interference beyond households; consider designs or analyses that model spillover effects if relevant."
+          },
+          {
+            "category": "Design Feasibility and Unsupported Methodology",
+            "severity": "high",
+            "evidence": "Calculator status is 'unsupported design'; rationale states cluster randomized design is not supported and breaks standard assumptions.",
+            "explanation": "Use of unsupported design constraints means statistical power and sample size outputs will not be valid, risking faulty experiment planning and misleading conclusions.",
+            "recommendation": "Switch to supported independent two-arm design or employ specialized cluster-randomized trial methods supported by appropriate software and expertise."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Actual average household size and its distribution within the eligible pool.",
+          "Intra-class correlation coefficient (ICC) of card spending within households.",
+          "Whether sample size planning will formally adjust for clustering (design effect).",
+          "Plans to analyze or model spillover/interference beyond household clusters.",
+          "Exact nature of randomization within households (e.g., all or none treated)."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 15.214
+    },
+    {
+      "id": "sequential-peeking",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 3484,
+          "attempts": 1,
+          "input_tokens": 1396,
+          "output_tokens": 148,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4916,
+          "attempts": 1,
+          "input_tokens": 768,
+          "output_tokens": 324,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 7884,
+          "attempts": 1,
+          "input_tokens": 1318,
+          "output_tokens": 528,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": null,
+        "primary_metric": "average card spending",
+        "observation_period": "30 days",
+        "allocation": "1:1",
+        "rationale": "The experiment objective specifies repeatedly testing each day and stopping immediately when p < 0.05, which constitutes sequential testing and optional stopping. This design feature is not supported in a fixed-horizon two-arm randomized experiment framework. The rest of the parameters fit an independent two-arm design with randomization of customers to personalized vs generic promotions over 30 days, measuring average card spending.",
+        "assumptions": [
+          "Each customer can be independently randomized to treatment or control.",
+          "Average card spending can be measured accurately per customer during the observation period.",
+          "The randomization proportions are equal (1:1).",
+          "Baseline mean and SD reflect the control group's spending distribution."
+        ],
+        "open_questions": [
+          "Do you want to proceed with a fixed-horizon design without repeated daily testing?",
+          "What is the primary randomization unit exactly (e.g., customer-level)?",
+          "Should the observation period be exactly 30 days without interim looks?",
+          "Is the target minimum detectable effect size required for sample size planning?",
+          "Would you accept a design that requires adjustment for sequential monitoring (e.g., alpha spending methods)?"
+        ],
+        "limitations": [
+          "Cannot implement repeated daily testing with immediate stopping in fixed-horizon independent two-arm design.",
+          "Sequential testing requires methods beyond fixed-horizon comparison assumptions.",
+          "Interim looks and early stopping inflate type I error unless adjusted for.",
+          "Sample size planning cannot proceed without deciding on final design parameters ignoring sequential testing."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-sequential-peeking",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed experiment specifies a fixed-horizon two-arm randomized design but includes repeated daily significance testing with immediate stopping upon p<0.05, which contradicts fixed-horizon assumptions and leads to inflated Type I error. The design lacks clear randomization unit definition and ignores necessary statistical corrections for sequential monitoring. These conflicts impact validity and inference reliability.",
+        "risks": [
+          {
+            "category": "Type I Error Inflation",
+            "severity": "high",
+            "evidence": "The proposal includes 'repeatedly test each day and stop immediately when p is below 0.05' within a fixed-horizon framework without adjustments.",
+            "explanation": "Repeated significance testing (sequential testing) increases false positive risk unless corrected by alpha spending or group sequential methods, which are not implemented here.",
+            "recommendation": "Adopt a formal sequential testing approach with alpha spending corrections or revert to a single fixed-horizon test without interim looks."
+          },
+          {
+            "category": "Design-Analysis Misalignment",
+            "severity": "high",
+            "evidence": "The design family is marked as 'unsupported' with assumptions of independent units and fixed horizon, conflicting with the proposed sequential testing plan.",
+            "explanation": "Incompatible design assumptions invalidate standard sample size and power calculations; analysis will not control type I or II errors correctly.",
+            "recommendation": "Explicitly define a supported design (fixed horizon or formal sequential) and align statistical methods and sample size planning accordingly."
+          },
+          {
+            "category": "Randomization Unit Ambiguity",
+            "severity": "medium",
+            "evidence": "Open question notes lack of exact randomization unit definition (e.g., customer-level).",
+            "explanation": "Ambiguity in randomization unit risks unit-of-analysis errors, possible interference, or clustering effects unaccounted for in variance assumptions.",
+            "recommendation": "Define and confirm randomization unit clearly, then account for it in design and analysis, adjusting for clustering if relevant."
+          },
+          {
+            "category": "Unsupported Sequential Monitoring",
+            "severity": "high",
+            "evidence": "Design notes 'Sequential testing requires methods beyond fixed-horizon comparison assumptions' and limitations list inability to implement repeated daily testing with standard methods.",
+            "explanation": "Ignoring sequential monitoring adjustments inflates false positive rates and invalidates p-values and confidence intervals.",
+            "recommendation": "Use specialist sequential analysis methods (e.g., alpha spending functions, group sequential designs) if interim looks and early stopping are desired."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Whether the randomization unit is customer-level and whether customers can be independently randomized without interference",
+          "If the target detectable effect and sample size are confirmed ignoring sequential testing",
+          "Whether the user accepts adjusting design to remove sequential testing or to apply formal sequential analysis methods",
+          "Whether the planned observation period is exactly 30 days without interim looks"
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 16.284
+    },
+    {
+      "id": "paired-design",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 1736,
+          "attempts": 1,
+          "input_tokens": 1392,
+          "output_tokens": 124,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 2867,
+          "attempts": 1,
+          "input_tokens": 764,
+          "output_tokens": 213,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 4556,
+          "attempts": 1,
+          "input_tokens": 1195,
+          "output_tokens": 326,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": null,
+        "primary_metric": "average card spending",
+        "observation_period": "30 days",
+        "allocation": "1:1",
+        "rationale": "The objective requests a synthetic experiment with matched pairs design analyzing within-pair differences, which is not supported by the current scope that only accommodates independent two-arm randomized experiments with fixed horizons. Implementing matched pairs requires paired observations or blocking that the system does not support. Therefore, the proposed design cannot be drafted within the supported framework.",
+        "assumptions": [],
+        "open_questions": [
+          "Are you willing to proceed with a standard independent two-arm randomized design without matched pairs?",
+          "What is the exact definition of the pairs for matching, and are covariates or pre-treatment measurements available?",
+          "Is there a possibility to redesign the experiment as a fully randomized independent two-arm trial?"
+        ],
+        "limitations": [
+          "Current system does not support matched pairs or paired analysis designs.",
+          "The requested matched pairs design requires paired randomization and analysis not covered here."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-paired-design",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed matched pairs design conflicts with the confirmed assumptions in the calculator of independent units and unsupported design family, making the statistical calculations invalid and the design unimplementable within the current framework.",
+        "risks": [
+          {
+            "category": "Design Validity",
+            "severity": "high",
+            "evidence": "The objective and proposal specify using matched pairs and within-pair difference analysis, but the calculator confirms no support for paired or matched designs and requires independent units.",
+            "explanation": "Matched pairs require paired randomization and analysis that violates independence assumptions. Using a calculator designed for independent groups invalidates power/sample size estimates and analysis plans.",
+            "recommendation": "Redesign the experiment as a standard independent two-arm randomized trial without matching and paired analyses, aligning with tool capabilities and assumptions."
+          },
+          {
+            "category": "Statistical Analysis",
+            "severity": "high",
+            "evidence": "Confirmed assumptions include two-sided fixed-horizon testing with independent units, but the proposal\u2019s matched pairs approach conflicts with this.",
+            "explanation": "The analysis strategy must reflect the randomization unit and design. Using within-pair differences without proper paired randomization and analysis support leads to incorrect inference and potentially inflated type I error or loss of power.",
+            "recommendation": "Adopt analysis methods and sample size calculations appropriate for the chosen design; if matched pairs are essential, use specialized tools supporting them."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Definition and availability of pairs for matched design and pre-treatment covariates or baseline measures used for matching.",
+          "Willingness to proceed with a conventional independent two-arm randomized design instead of matched pairs.",
+          "Feasibility of redesigning the experiment as a fully randomized independent trial without pairing."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 9.159
+    },
+    {
+      "id": "three-arms",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2282,
+          "attempts": 1,
+          "input_tokens": 1394,
+          "output_tokens": 124,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4133,
+          "attempts": 1,
+          "input_tokens": 766,
+          "output_tokens": 286,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 10201,
+          "attempts": 1,
+          "input_tokens": 1273,
+          "output_tokens": 450,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": null,
+        "primary_metric": "average card spending",
+        "observation_period": "30 days",
+        "allocation": null,
+        "rationale": "The objective specifies a three-arm experiment with groups: generic, personalized, and cashback promotions. This setup involves multiple treatment arms beyond a simple two-arm comparison, which is unsupported by the current design scope limited to independent two-arm fixed-horizon experiments.",
+        "assumptions": [
+          "Randomization is independent at the customer level.",
+          "Population size is 100,000 customers eligible for the experiment.",
+          "Primary metric is continuous average card spending measured over 30 days."
+        ],
+        "open_questions": [
+          "Should the design be revised to a supported two-arm comparison by selecting two of the three groups, or is there flexibility to support multi-arm designs?",
+          "Is equal allocation across the three arms required, or can it be adjusted?",
+          "Are there additional subpopulations or segmentation factors to consider for stratification or blocking?",
+          "Is there concern about multiple comparison adjustments due to multiple arms?",
+          "Are there any constraints on randomization units other than individual customers?"
+        ],
+        "limitations": [
+          "Unsupported design due to three distinct arms rather than two required for independent two-arm design.",
+          "Cannot perform multi-arm or factorial experiments in current supported framework.",
+          "No sample size or power calculations provided as they are not requested and baseline parameters are known but planning is pending."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-three-arms",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The experiment proposal conflicts with the confirmed statistical assumptions by requesting a three-arm design (generic, personalized, cashback) while the current framework supports only independent two-arm fixed-horizon experiments. This mismatch means standard power calculations and analysis methods do not directly apply.",
+        "risks": [
+          {
+            "category": "Design Compatibility",
+            "severity": "high",
+            "evidence": "Design specifies three distinct arms but the confirmed statistical assumptions require two independent arms and do not support multi-arm experiments.",
+            "explanation": "Multi-arm experiments require different analysis and adjustment methods (e.g., multiple comparisons correction, differing sample size allocation), which are not supported in the current design scope. Attempting to apply two-arm assumptions to a three-arm design risks invalid power calculations and inference.",
+            "recommendation": "Revise the design to a supported two-arm experiment by selecting two of the promotion types, or adopt specialist multi-arm experiment methodologies and analytics that explicitly support multiple treatment arms."
+          },
+          {
+            "category": "Randomization and Allocation",
+            "severity": "medium",
+            "evidence": "Allocation ratio is unspecified for three arms, with questions about equal or unequal allocation across groups.",
+            "explanation": "Unequal or non-standard allocation ratios affect statistical power and require tailored sample size calculations and analysis approaches, especially in a multi-arm setting. The current design does not clarify allocation or accommodate multi-arm allocation logic.",
+            "recommendation": "Clearly define allocation ratios compatible with a supported design, ideally equal allocation for two arms unless specialist methods are used. Avoid unspecified or unsupported allocation in multi-arm setups."
+          },
+          {
+            "category": "Multiple Comparisons and Statistical Validity",
+            "severity": "medium",
+            "evidence": "No mention of multiple comparisons adjustments despite multiple arms, as noted in open questions.",
+            "explanation": "Testing multiple treatment arms against a control increases risk of Type I error inflation. Without adjustments (e.g., Bonferroni, Holm), statistical significance declared at nominal alpha levels is invalid.",
+            "recommendation": "Implement multiple comparison corrections or select a two-arm design to avoid this risk given current framework limitations."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Whether the design and analysis can be adapted to properly support three-arm experiments beyond current two-arm restrictions",
+          "The intended allocation ratios and potential stratification or blocking factors to ensure balance and reduce variance",
+          "Plans for handling multiple hypothesis testing due to multiple arms"
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 16.617
+    },
+    {
+      "id": "repeated-measures",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2088,
+          "attempts": 1,
+          "input_tokens": 1394,
+          "output_tokens": 150,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3665,
+          "attempts": 1,
+          "input_tokens": 766,
+          "output_tokens": 271,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 5482,
+          "attempts": 1,
+          "input_tokens": 1258,
+          "output_tokens": 359,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "Primary metric is average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": null,
+        "primary_metric": "average card spending",
+        "observation_period": null,
+        "allocation": null,
+        "rationale": "The request specifies treating each daily record of each customer as an independent observation despite repeated measures per customer over 30 days. This introduces within-subject correlation violating the independence assumption required for a standard independent two-arm design. Consequently, a fixed-horizon independent two-arm randomized experiment design is not appropriate here without accounting for repeated measures or clustering.",
+        "assumptions": [
+          "Randomizing customers (not their daily records) is the proper unit to avoid interference.",
+          "Repeated daily spending observations per customer are correlated over time.",
+          "Treating repeated measures as independent observations leads to biased variance estimates."
+        ],
+        "open_questions": [
+          "Should the analysis account for repeated measures per customer, e.g., via mixed models?",
+          "Is the randomization planned at the customer level or daily record level?",
+          "Should the primary metric be aggregated per customer over 30 days instead of daily records?"
+        ],
+        "limitations": [
+          "Design ignores correlation among repeated daily spending observations per customer, violating independence assumptions of the test.",
+          "Analysis treating daily records as independent inflates sample size artificially and does not reflect true variance.",
+          "Standard sample size calculations and hypothesis testing based on independent observations are invalid under these conditions."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-repeated-measures",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed design randomizes at the customer level but analyzes daily repeated spending records as independent observations, violating independence assumptions and undermining standard fixed-horizon two-arm test validity.",
+        "risks": [
+          {
+            "category": "Statistical Validity",
+            "severity": "high",
+            "evidence": "The design treats each daily record per customer as independent despite repeated measures over 30 days per customer, causing within-subject correlation to violate independence assumptions.",
+            "explanation": "Within-subject correlation reduces the effective sample size and inflates variance estimates if ignored, leading to biased significance tests and confidence intervals.",
+            "recommendation": "Aggregate daily spending per customer or apply statistical models (e.g., mixed-effects models) that account for repeated measures correlation."
+          },
+          {
+            "category": "Analysis Plan",
+            "severity": "high",
+            "evidence": "Randomization is at customer level but analysis is at daily record level, creating mismatch between randomization unit and analysis unit.",
+            "explanation": "Mismatch inflates nominal sample size and underestimates variance, invalidating inference and biasing power calculations.",
+            "recommendation": "Ensure unit of analysis matches randomization unit; analyze aggregated customer-level metrics or use appropriate hierarchical models."
+          },
+          {
+            "category": "Design Feasibility",
+            "severity": "medium",
+            "evidence": "Standard power and sample size calculations assume independent observations but data contain clustered repeated measures not accounted for.",
+            "explanation": "Sample size and power calculations ignoring clustering overestimate power and underestimate required sample size.",
+            "recommendation": "Revise power analysis to incorporate intra-class correlation or adopt specialist methods for repeated measures designs."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Is randomization truly implemented at the customer level versus daily record level?",
+          "Should the primary metric be redefined as aggregated customer-level spending over 30 days?",
+          "Will the analysis plan be revised to employ mixed models or repeated-measures methods?"
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 11.236
+    },
+    {
+      "id": "time-series",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2390,
+          "attempts": 1,
+          "input_tokens": 1398,
+          "output_tokens": 147,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4369,
+          "attempts": 1,
+          "input_tokens": 770,
+          "output_tokens": 340,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 6430,
+          "attempts": 1,
+          "input_tokens": 1326,
+          "output_tokens": 455,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "unsupported",
+        "hypothesis": null,
+        "treatment": null,
+        "control": null,
+        "randomization_unit": null,
+        "primary_metric": "average card spending",
+        "observation_period": null,
+        "allocation": null,
+        "rationale": "The objective specifies a desired independent two-arm experiment with equal randomization to personalized versus generic promotions among 100,000 customers for 30 days. However, the user overrides randomization by using time periods (last month as control, this month as treatment) and analyzing aggregate time series data, which introduces temporal confounding and violates independent two-arm randomization assumptions. This design corresponds to a time-series or quasi-experimental design rather than a straightforward randomized controlled trial, making it unsupported under the independent two-arm fixed-horizon framework.",
+        "assumptions": [],
+        "open_questions": [
+          "Should we proceed with a standard independent two-arm randomized controlled trial design with equal randomization of customers to personalized vs generic promotions for 30 days, as the initial design suggests?",
+          "Is the override to use time periods instead of randomizing individual customers a firm constraint, or can it be reconsidered to enable a valid independent two-arm experiment?",
+          "What is the exact observation period for the primary metric measurement (e.g., spending window per customer after promotion)?"
+        ],
+        "limitations": [
+          "Using last month as control and this month as treatment introduces potential time-based confounders, such as seasonality or external events, invalidating causal inference under standard RCT assumptions.",
+          "Analyzing aggregate time series violates the assumption of independent randomization at the customer level and precludes a classical two-arm experiment design.",
+          "Without proper randomization, estimates of treatment effect may be biased and not attributable solely to the promotion type."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-time-series",
+        "source": "derived",
+        "status": "unsupported_design",
+        "inputs": {
+          "design_family": "unsupported",
+          "design_confirmed": true,
+          "independent_units": false,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Revise to an independent two-arm design or use a specialist method."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed design conflicts with the stated objective and confirmed statistical assumptions by replacing independent customer-level randomization with a time-series comparison using last month as control and this month as treatment. This introduces temporal confounding and violates the independent two-arm experiment assumptions, rendering the design unsupported.",
+        "risks": [
+          {
+            "category": "Design Validity",
+            "severity": "high",
+            "evidence": "Instead of independently randomizing 100,000 customers equally between personalized and generic promotions for 30 days, the design overrides randomization by using last month as control and this month as treatment, analyzing aggregate time series.",
+            "explanation": "This time-based design introduces confounding due to seasonality, trends, or other time-varying factors unrelated to treatment, invalidating causal inference under RCT assumptions of independent, concurrent randomization.",
+            "recommendation": "Adopt a classical independent two-arm randomized controlled trial design with customer-level randomization and concurrent arms to eliminate temporal confounding."
+          },
+          {
+            "category": "Randomization and Independence",
+            "severity": "high",
+            "evidence": "The design confirms no independent units (independent_units=false) and uses an unsupported 'design_family':'unsupported' approach not aligned with power and sample size calculations assuming independent units and two-arm randomization.",
+            "explanation": "Power and sample size calculations rely on independent observations with random assignment; without independent randomization, these calculations are invalid and may mislead about sensitivity to detect effect.",
+            "recommendation": "Revert to independent randomization of units to satisfy assumptions required for valid statistical inference and power calculations."
+          },
+          {
+            "category": "Measurement and Observation Window",
+            "severity": "medium",
+            "evidence": "The objective and design do not specify an explicit observation period for primary metric measurement; the override to use monthly aggregates obscures per-customer observation windows.",
+            "explanation": "Ambiguous timing or inconsistent observation windows can induce bias or variability in metric measurement, hindering precise effect estimation.",
+            "recommendation": "Specify and consistently apply a clear observation window per customer matching the intended treatment exposure period."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Is the override to use time periods instead of randomizing individual customers a firm constraint or flexible?",
+          "What is the exact observation period per customer for measuring average card spending after promotion exposure?",
+          "Should the experiment proceed with an independent two-arm randomized design as initially specified?"
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 13.19
+    },
+    {
+      "id": "prompt-injection",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2817,
+          "attempts": 1,
+          "input_tokens": 1397,
+          "output_tokens": 147,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 4701,
+          "attempts": 1,
+          "input_tokens": 769,
+          "output_tokens": 335,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 6583,
+          "attempts": 1,
+          "input_tokens": 1353,
+          "output_tokens": 524,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Primary metric is average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "Baseline mean is 200 USD"
+        },
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target relative increase is 5%"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending compared to generic promotions.",
+        "treatment": "Personalized promotions",
+        "control": "Generic promotions",
+        "randomization_unit": "Individual customer",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days",
+        "allocation": "1:1",
+        "rationale": "An independent two-arm experiment randomizing 100,000 eligible customers equally to treatment and control groups over 30 days allows comparison of average card spending, a continuous metric, to detect the targeted 5% relative increase from the baseline mean of 200 USD. Equal allocation balances power and resource use. The observation period matches the promotional period for accurate measurement.",
+        "assumptions": [
+          "Customers are exchangeable and independent units for randomization.",
+          "No interference between customers affecting spending behavior.",
+          "Average card spending over 30 days adequately captures impact of promotions.",
+          "Baseline mean and standard deviation reliably represent behavior without promotion.",
+          "Target relative increase of 5% is meaningful and detectable with the sample size."
+        ],
+        "open_questions": [
+          "What is the minimal detectable effect size for a given power and significance level?",
+          "Is there a need to adjust for multiple comparisons or covariates?",
+          "Are there any customer segments requiring stratification or blocking?",
+          "Should any secondary metrics be collected to complement average card spending?"
+        ],
+        "limitations": [
+          "The effect of personalized promotions might vary across customer segments, which is not accounted for.",
+          "External factors influencing spending during the observation period could confound results.",
+          "Assumes no customer churn or missing data over 30 days, which might affect measurements.",
+          "The design does not specify plans for data quality checks or handling incomplete observations."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-prompt-injection",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 1570,
+        "n_treatment": 1570,
+        "total": 3140,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000569268798245,
+        "absolute_effect": 10.0,
+        "target_rate": null,
+        "feasible": true,
+        "formula_id": "continuous_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee.",
+          "A common baseline standard deviation is assumed in both arms."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed experiment largely aligns with the stated objective and confirmed statistical assumptions. It uses individual randomization with equal allocation, measures average card spending over 30 days, and targets a 5% relative increase from a reliable baseline. However, the user-requested claim of a guaranteed winning result with sample size 1 contradicts the confirmed power and sample size calculations and violates fundamental statistical principles.",
+        "risks": [
+          {
+            "category": "Sample Size Inadequacy",
+            "severity": "high",
+            "evidence": "User claim requests guaranteed winning detection with sample size 1, while confirmed calculations require 1570 customers per group for 80% power at 5% significance to detect a 5% relative uplift with baseline sd=100 USD.",
+            "explanation": "A sample size of 1 cannot provide reliable detection of the stated effect size given baseline variance; the claim ignores statistical uncertainty, risking false positive or negative conclusions.",
+            "recommendation": "Adhere to the calculated sample size of ~3140 total participants to maintain statistical validity and power."
+          },
+          {
+            "category": "Outcome Definition Risks",
+            "severity": "medium",
+            "evidence": "Primary metric is average card spending over 30 days, assuming stability of spending behavior and no missing data, but limitations note possible customer churn or missing data not addressed.",
+            "explanation": "Ignoring potential attrition or incomplete observations may bias outcome estimates or reduce effective sample size, compromising validity.",
+            "recommendation": "Implement data quality checks and plans for handling missing data or churn during the observation period."
+          },
+          {
+            "category": "Potential Confounding Factors",
+            "severity": "medium",
+            "evidence": "Limitations note external factors influencing spending during observation period and no stratification or blocking for customer segments.",
+            "explanation": "Uncontrolled external influences or heterogeneous treatment effects across segments may confound results or inflate variance, reducing power or causing bias.",
+            "recommendation": "Consider stratification by key customer segments and monitor external factors; adjust analysis accordingly."
+          },
+          {
+            "category": "Assumption of No Customer Interference",
+            "severity": "low",
+            "evidence": "Randomization unit is individual customer with assumption of no interference, but no explicit checks for spillover effects provided.",
+            "explanation": "If customer spending behaviors influence each other (e.g., social influence), the independence assumption may be violated, affecting inference.",
+            "recommendation": "Evaluate potential interference risks and consider design or analysis adjustments if spillovers are suspected."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Whether minimal detectable effect and power match intervention goals precisely, as user questions indicate.",
+          "Need for adjustment for multiple comparisons or covariates not settled.",
+          "Potential benefits of secondary metrics for complementary insights not fully considered.",
+          "Whether customer segments require stratification or blocking remains open."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 14.102
+    },
+    {
+      "id": "binary-conversion",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 1897,
+          "attempts": 1,
+          "input_tokens": 1376,
+          "output_tokens": 134,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3817,
+          "attempts": 1,
+          "input_tokens": 739,
+          "output_tokens": 291,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 8625,
+          "attempts": 1,
+          "input_tokens": 1287,
+          "output_tokens": 607,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 visitors"
+        },
+        "primary_metric": {
+          "value": "signup conversion",
+          "quote": "Primary outcome is binary signup conversion"
+        },
+        "metric_type": {
+          "value": "binary",
+          "quote": "Primary outcome is binary signup conversion"
+        },
+        "baseline_mean": null,
+        "baseline_sd": null,
+        "baseline_conversion_rate": {
+          "value": 0.1,
+          "quote": "Baseline conversion is 0.1"
+        },
+        "target_relative_uplift": {
+          "value": 0.2,
+          "quote": "target relative increase is 0.2"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "The new signup page will increase the signup conversion rate compared to the current page by at least 20%.",
+        "treatment": "New signup page",
+        "control": "Current signup page",
+        "randomization_unit": "Individual visitor",
+        "primary_metric": "signup conversion",
+        "observation_period": "14 days from assignment",
+        "allocation": "1:1",
+        "rationale": "An indivdual-level randomized controlled trial over 14 days will fairly compare the binary signup conversion metric between the new and current signup pages. Equal allocation ensures balanced groups given the total population of 100,000. The fixed horizon avoids early stopping bias. The metric is measured per visitor within the observation period.",
+        "assumptions": [
+          "Visitors are independent and identically distributed with similar baseline conversion probability.",
+          "No interference between visitors (stable unit treatment value assumption).",
+          "Signup conversion is accurately captured within the 14-day observation window.",
+          "Randomization is properly implemented ensuring groups are balanced.",
+          "No significant temporal trends or external factors will skew results during the trial."
+        ],
+        "open_questions": [
+          "What is the expected traffic per day, or should the entire 100,000 be randomized immediately?",
+          "Is there any stratification or blocking planned to ensure balance across visitor segments?",
+          "Are there any secondary metrics or subgroups of interest?",
+          "Is there any anticipated dropout or missing data, and how will it be handled?",
+          "Is sample size calculation needed for formal statistical power assurance?"
+        ],
+        "limitations": []
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-binary-conversion",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "signup conversion",
+          "metric_type": "binary",
+          "population_size": 100000,
+          "baseline_mean": null,
+          "baseline_sd": null,
+          "baseline_conversion_rate": 0.1,
+          "effect_type": "relative",
+          "effect_value": 0.2,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 3841,
+        "n_treatment": 3841,
+        "total": 7682,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000165286163744,
+        "absolute_effect": 0.020000000000000004,
+        "target_rate": 0.12000000000000001,
+        "feasible": true,
+        "formula_id": "binary_pooled_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed independent two-arm randomized trial with individual visitor randomization and binary signup conversion outcome aligns well with the confirmed statistical inputs and assumptions. Sample size and allocation match the power calculation for detecting a 20% relative increase from 10% baseline conversion. No major conflicts between objective, design, and inputs are evident.",
+        "risks": [
+          {
+            "category": "Selection Bias",
+            "severity": "low",
+            "evidence": "Randomization unit is individual visitor with 1:1 allocation and assumed proper implementation.",
+            "explanation": "Proper randomization at the individual visitor level generally minimizes selection bias risk if randomization is truly random and concealed.",
+            "recommendation": "Ensure randomization process is audited and allocation concealment maintained to prevent bias."
+          },
+          {
+            "category": "Temporal Confounding",
+            "severity": "medium",
+            "evidence": "Observation period is 14 days; no mention of traffic distribution or temporal stratification, and assumption that no temporal trends skew results.",
+            "explanation": "If visitor characteristics or external factors vary over the 14 days, lack of stratification or blocking could cause imbalance and confound treatment effect estimation.",
+            "recommendation": "Clarify daily traffic assumptions and consider stratified or block randomization by time or key visitor segments to mitigate temporal confounding."
+          },
+          {
+            "category": "Attrition and Missing Data",
+            "severity": "medium",
+            "evidence": "Open questions note no anticipated dropout or missing data handling plan; assumptions mention signup conversion captured within 14 days.",
+            "explanation": "If visitors drop out or have incomplete observation, ignoring attrition could bias effect estimates or reduce power since the calculation assumes full analyzable counts.",
+            "recommendation": "Plan for monitoring and handling missing data and dropouts, specifying analytic approach (e.g., ITT, imputation) consistent with trial assumptions."
+          },
+          {
+            "category": "Exposure and Measurement Window",
+            "severity": "low",
+            "evidence": "Observation window set to 14 days post-assignment, assumed to capture signup conversion accurately.",
+            "explanation": "If the signup conversion can occur with variable delay, a fixed 14-day window may misclassify outcomes, but this is assumed valid by design.",
+            "recommendation": "Validate that 14 days is sufficient to capture the primary outcome and consider sensitivity analyses if delays are possible."
+          },
+          {
+            "category": "Unresolved Assumptions",
+            "severity": "low",
+            "evidence": "Open questions remain about traffic pacing, stratification, secondary metrics, dropout, and formal sample size calculation.",
+            "explanation": "These unresolved issues do not invalidate the current design but limit clarity and robustness of execution and analysis planning.",
+            "recommendation": "Address open questions explicitly, especially traffic flow over time and dropout handling, to ensure design robustness and interpretation clarity."
+          }
+        ],
+        "unresolved_assumptions": [
+          "What is the expected traffic per day, or should the entire 100,000 be randomized immediately?",
+          "Is there any stratification or blocking planned to ensure balance across visitor segments?",
+          "Are there any secondary metrics or subgroups of interest?",
+          "Is there any anticipated dropout or missing data, and how will it be handled?",
+          "Is sample size calculation needed for formal statistical power assurance?"
+        ]
+      },
+      "risk_hits": 0,
+      "risk_checks": 0,
+      "numbers_preserved": true,
+      "latency_seconds": 14.341
+    },
+    {
+      "id": "binary-rare-event",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2242,
+          "attempts": 1,
+          "input_tokens": 1376,
+          "output_tokens": 134,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3919,
+          "attempts": 1,
+          "input_tokens": 739,
+          "output_tokens": 300,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 5270,
+          "attempts": 1,
+          "input_tokens": 1306,
+          "output_tokens": 416,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 6,
+      "extraction_checks": 6,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 visitors"
+        },
+        "primary_metric": {
+          "value": "signup conversion",
+          "quote": "Primary outcome is binary signup conversion"
+        },
+        "metric_type": {
+          "value": "binary",
+          "quote": "Primary outcome is binary signup conversion"
+        },
+        "baseline_mean": null,
+        "baseline_sd": null,
+        "baseline_conversion_rate": {
+          "value": 0.001,
+          "quote": "Baseline conversion is 0.001"
+        },
+        "target_relative_uplift": {
+          "value": 0.5,
+          "quote": "target relative increase is 0.5"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "The new signup page increases the signup conversion rate compared to the current page.",
+        "treatment": "New signup page.",
+        "control": "Current signup page.",
+        "randomization_unit": "Individual visitor.",
+        "primary_metric": "signup conversion",
+        "observation_period": "14 days from visitor assignment.",
+        "allocation": "1:1 equal randomization.",
+        "rationale": "The design tests whether the new signup page improves the binary conversion rate during a fixed 14-day horizon, randomizing each of 100,000 eligible visitors equally to treatment or control. The primary metric is a binary signup conversion, measured per visitor within the observation window.",
+        "assumptions": [
+          "Visitors are independent and can be randomly assigned without contamination.",
+          "Conversion events occur within the 14-day observation window and are properly tracked.",
+          "Baseline conversion rate of 0.001 and target uplift of 50% are accurate and relevant for planning."
+        ],
+        "open_questions": [
+          "Are there segments or covariates that should be balanced or controlled in randomization?",
+          "Is the conversion event defined and captured consistently across variants?",
+          "What is the expected traffic distribution over the 14-day period; is equal allocation feasible throughout?"
+        ],
+        "limitations": [
+          "The very low baseline conversion rate may require large sample sizes for detection of uplift; power calculation pending.",
+          "No early stopping means the experiment will run the full 14 days regardless of interim results.",
+          "Randomization is at the individual visitor level; potential server-side or client-side caching could affect assignment fidelity."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-binary-rare-event",
+        "source": "derived",
+        "status": "computed",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "signup conversion",
+          "metric_type": "binary",
+          "population_size": 100000,
+          "baseline_mean": null,
+          "baseline_sd": null,
+          "baseline_conversion_rate": 0.001,
+          "effect_type": "relative",
+          "effect_value": 0.5,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": 78390,
+        "n_treatment": 78390,
+        "total": 156780,
+        "actual_allocation_ratio": 1.0,
+        "achieved_power": 0.8000034244741299,
+        "absolute_effect": 0.0005,
+        "target_rate": 0.0015,
+        "feasible": false,
+        "formula_id": "binary_pooled_normal_v1",
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [],
+        "warnings": [
+          "Required sample exceeds the eligible population; this plan is not feasible with the supplied pool."
+        ]
+      },
+      "critique": {
+        "summary": "The experiment aims to detect a 50% relative uplift on a very low baseline conversion (0.001) using equal randomization to two pages over 14 days among 100,000 visitors. The power calculation indicates that over 150,000 total samples are required, exceeding the available population, rendering the design infeasible as stated.",
+        "risks": [
+          {
+            "category": "Feasibility",
+            "severity": "high",
+            "evidence": "Calculated required sample size (156,780) exceeds the pool size (100,000).",
+            "explanation": "Insufficient population size means the study is underpowered to detect the target effect at the planned alpha and power levels.",
+            "recommendation": "Increase traffic or experiment duration, relax power or effect size targets, or focus on a metric with higher baseline conversion to improve feasibility."
+          },
+          {
+            "category": "Measurement",
+            "severity": "medium",
+            "evidence": "Open questions about consistent definition and capture of conversion event across variants.",
+            "explanation": "Ambiguity in conversion capture may introduce measurement bias or differential misclassification, affecting validity and power.",
+            "recommendation": "Confirm and document consistent tracking and definitions of conversion events across treatment and control."
+          },
+          {
+            "category": "Randomization",
+            "severity": "medium",
+            "evidence": "Concern about server-side or client-side caching affecting assignment fidelity mentioned in limitations.",
+            "explanation": "If randomization unit (individual visitor) is not perfectly enforced due to caching, treatment assignments may be contaminated or confounded, biasing results.",
+            "recommendation": "Validate and ensure robust randomization implementation preventing treatment contamination."
+          }
+        ],
+        "unresolved_assumptions": [
+          "No segment or covariate balancing planned; potential imbalance risk unquantified.",
+          "Traffic distribution over 14 days and feasibility of maintaining 1:1 allocation throughout are unknown."
+        ]
+      },
+      "risk_hits": 0,
+      "risk_checks": 0,
+      "numbers_preserved": true,
+      "latency_seconds": 11.433
+    },
+    {
+      "id": "missing-variance",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 1861,
+          "attempts": 1,
+          "input_tokens": 1365,
+          "output_tokens": 109,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3945,
+          "attempts": 1,
+          "input_tokens": 728,
+          "output_tokens": 306,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 5950,
+          "attempts": 1,
+          "input_tokens": 1260,
+          "output_tokens": 475,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 5,
+      "extraction_checks": 5,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Measure average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "Measure average card spending"
+        },
+        "baseline_mean": {
+          "value": 200.0,
+          "quote": "The baseline mean is 200 USD"
+        },
+        "baseline_sd": null,
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target a 5% relative increase"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions increase average card spending by at least 5% relative to generic promotions.",
+        "treatment": "Personalized promotions tailored to individual customer preferences.",
+        "control": "Generic promotions with no personalization.",
+        "randomization_unit": "Individual customer",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days from promotion start",
+        "allocation": "50% treatment, 50% control",
+        "rationale": "Randomizing individual customers equally to treatment or control allows for unbiased comparison of average card spending over a 30-day period. Average card spending is measured per customer in USD during this period. Equal allocation optimizes power for detecting the hypothesized 5% relative increase in spending from the baseline mean of 200 USD.",
+        "assumptions": [
+          "Customers are independent units and respond independently to promotions.",
+          "Promotion impact manifests within the 30-day observation window.",
+          "No significant interference or spillover effects between customers.",
+          "Average card spending in USD is reliably captured for all customers during the observation period."
+        ],
+        "open_questions": [
+          "What is the expected standard deviation of average card spending to enable sample size and power calculations?",
+          "Are there any known confounders that need to be balanced or controlled?",
+          "Is 30 days sufficient for customers to respond fully to the promotions?",
+          "Are there any constraints on budget or promotional intensity?"
+        ],
+        "limitations": [
+          "Standard deviation of the primary metric is unknown, so power and sample size calculations cannot be finalized.",
+          "No information on potential attrition or missing data due to customer inactivity."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-missing-variance",
+        "source": "derived",
+        "status": "insufficient_information",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": 200.0,
+          "baseline_sd": null,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Provide baseline sd."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "The proposed two-arm individual randomization evaluating a 5% uplift in average card spending over 30 days between personalized and generic promotions matches the claimed design family and metric. However, no baseline standard deviation is supplied, preventing calculation of required sample size or guaranteed power. The assumptions include independence and no interference, but promotion adherence, missing data, and possible confounders are not detailed.",
+        "risks": [
+          {
+            "category": "Variance Assumption Missing",
+            "severity": "high",
+            "evidence": "No baseline standard deviation of average card spending is provided, so sample size and power cannot be computed.",
+            "explanation": "Without variance information, it is impossible to validate if the planned enrollment or detected effect size has sufficient power to detect a 5% increase.",
+            "recommendation": "Estimate or obtain baseline standard deviation from historical data before finalizing sample size and powering the experiment."
+          },
+          {
+            "category": "Potential Confounding or Imbalance",
+            "severity": "medium",
+            "evidence": "No mention of controlling or balancing known confounders or stratification is provided.",
+            "explanation": "If key variables (e.g. customer segment, prior spending) differ by chance across arms, this might bias effect estimates or inflate variance.",
+            "recommendation": "Consider blocking or adjusting for known confounders to improve precision and validity."
+          },
+          {
+            "category": "Observation Window Uncertainty",
+            "severity": "medium",
+            "evidence": "The 30-day post-promotion observation period is assumed sufficient but no supporting evidence or rationale is given.",
+            "explanation": "If promotional impact manifests beyond 30 days or requires cumulative exposure, the observation window may miss part of the effect.",
+            "recommendation": "Validate whether 30 days captures the full effect or consider longer observation or interim analyses."
+          },
+          {
+            "category": "Attrition and Missingness",
+            "severity": "medium",
+            "evidence": "No information is given on potential attrition, customer inactivity, or missing spending data.",
+            "explanation": "If customers have no transactions or missing data, effective sample size and randomization balance may be compromised.",
+            "recommendation": "Plan and document handling of missing data and attrition in analysis; monitor actual data completeness during the trial."
+          }
+        ],
+        "unresolved_assumptions": [
+          "Expected baseline standard deviation of average card spending.",
+          "Presence and nature of any confounders requiring control.",
+          "Suitability of the 30-day observation window for full treatment effect.",
+          "Potential for attrition or missingness in spending data during the observation period."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 11.756
+    },
+    {
+      "id": "missing-baseline",
+      "stages": {
+        "extraction": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "extract_v2",
+          "latency_ms": 2889,
+          "attempts": 1,
+          "input_tokens": 1366,
+          "output_tokens": 130,
+          "estimated_cost_usd": null
+        },
+        "design": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "design_v1",
+          "latency_ms": 3902,
+          "attempts": 1,
+          "input_tokens": 729,
+          "output_tokens": 329,
+          "estimated_cost_usd": null
+        },
+        "critique": {
+          "model": "gpt-4.1-mini-2025-04-14",
+          "prompt_version": "critic_v1",
+          "latency_ms": 10987,
+          "attempts": 1,
+          "input_tokens": 1286,
+          "output_tokens": 673,
+          "estimated_cost_usd": null
+        }
+      },
+      "error": null,
+      "extraction_matches": 5,
+      "extraction_checks": 5,
+      "extraction": {
+        "population_size": {
+          "value": 100000,
+          "quote": "the eligible pool contains 100,000 customers"
+        },
+        "primary_metric": {
+          "value": "average card spending",
+          "quote": "Measure average card spending"
+        },
+        "metric_type": {
+          "value": "continuous",
+          "quote": "Measure average card spending"
+        },
+        "baseline_mean": null,
+        "baseline_sd": {
+          "value": 100.0,
+          "quote": "baseline standard deviation is 100 USD"
+        },
+        "baseline_conversion_rate": null,
+        "target_relative_uplift": {
+          "value": 0.05,
+          "quote": "target a 5% relative increase"
+        }
+      },
+      "design": {
+        "design_family": "independent_two_arm",
+        "hypothesis": "Personalized promotions lead to a 5% increase in average card spending compared to generic promotions.",
+        "treatment": "Customers who receive personalized promotions tailored to their preferences.",
+        "control": "Customers who receive generic, non-personalized promotions.",
+        "randomization_unit": "Individual customer",
+        "primary_metric": "average card spending",
+        "observation_period": "30 days post promotion assignment",
+        "allocation": "1:1",
+        "rationale": "Randomizing individual customers equally to personalized vs. generic promotions allows direct comparison of spending behavior over a fixed 30-day window. Average card spending is a continuous metric reflecting economic impact. Equal allocation maximizes power for a two-arm test. The baseline SD informs future sample size calculations, though mean spending is unknown.",
+        "assumptions": [
+          "Customers only receive one type of promotion (personalized or generic) during the period.",
+          "Customer spending behavior is stable and measured accurately over 30 days.",
+          "No significant interference between customers across groups.",
+          "Baseline mean card spending is not known but assumed stable enough to target a 5% uplift."
+        ],
+        "open_questions": [
+          "What is the baseline mean of average card spending to finalize power/sample size planning?",
+          "Are there any segments within the population requiring stratification or separate analysis?",
+          "Are there any operational constraints on promotion delivery or compliance tracking?",
+          "Is 30 days sufficient to capture the effect of promotion on spending, or should longer follow-up be considered?"
+        ],
+        "limitations": [
+          "Unknown baseline mean precludes precise sample size and power calculation at this stage.",
+          "The design assumes no contamination between treatment and control customers.",
+          "Results may not generalize beyond the 30-day observation period."
+        ]
+      },
+      "family_correct": true,
+      "statistics": {
+        "request_id": "evaluation-missing-baseline",
+        "source": "derived",
+        "status": "insufficient_information",
+        "inputs": {
+          "design_family": "independent_two_arm",
+          "design_confirmed": true,
+          "independent_units": true,
+          "primary_metric": "average card spending",
+          "metric_type": "continuous",
+          "population_size": 100000,
+          "baseline_mean": null,
+          "baseline_sd": 100.0,
+          "baseline_conversion_rate": null,
+          "effect_type": "relative",
+          "effect_value": 0.05,
+          "alpha": 0.05,
+          "power": 0.8,
+          "allocation_ratio": 1.0
+        },
+        "n_control": null,
+        "n_treatment": null,
+        "total": null,
+        "actual_allocation_ratio": null,
+        "achieved_power": null,
+        "absolute_effect": null,
+        "target_rate": null,
+        "feasible": null,
+        "formula_id": null,
+        "assumptions": [
+          "Independent units, two arms, random assignment, fixed horizon and one primary outcome.",
+          "Two-sided normal approximation; no continuity correction or finite-population correction.",
+          "No clustering, pairing, repeated measures, sequential testing or heavy interference.",
+          "No attrition allowance; counts are analyzable units. Pool feasibility is not a duration estimate.",
+          "Power is an approximation under supplied assumptions, not an observed result or guarantee."
+        ],
+        "questions": [
+          "Provide baseline mean."
+        ],
+        "warnings": []
+      },
+      "critique": {
+        "summary": "Proposed experiment is a two-arm individually randomized trial comparing personalized vs. generic promotions on average card spending over 30 days. The design aligns with the independent two-arm assumptions, continuous outcome, and 1:1 allocation. However, the unknown baseline mean spending precludes precise power/sample size calculation. Several key implementation and analytic assumptions remain unconfirmed.",
+        "risks": [
+          {
+            "category": "Statistical Power and Sample Size",
+            "severity": "high",
+            "evidence": "The baseline mean card spending is unknown, which prevents accurate calculation of absolute effect size and thus power/sample size determination.",
+            "explanation": "Relative effect size (5% uplift) cannot be converted into an absolute difference without baseline mean, making it impossible to confirm sufficiency of sample size and power.",
+            "recommendation": "Collect or estimate baseline mean average card spending before finalizing sample size/power calculations."
+          },
+          {
+            "category": "Contamination and Interference",
+            "severity": "medium",
+            "evidence": "Assumption states no contamination or interference between customers receiving different promotions, but no mitigation or monitoring strategies are described.",
+            "explanation": "If customers share information or influence one another's behavior across treatment arms, estimated treatment effects could be biased or attenuated.",
+            "recommendation": "Implement monitoring for cross-arm contamination and consider design features or analysis adjustments to address potential interference."
+          },
+          {
+            "category": "Randomization and Analysis Unit Consistency",
+            "severity": "low",
+            "evidence": "Randomization unit is the individual customer, and primary metric is individual-level spending measured over 30 days.",
+            "explanation": "No mismatch between randomization and analysis unit reduces risk of unit-of-analysis error.",
+            "recommendation": "Maintain adherence to individual-level randomization and metric collection to preserve validity."
+          },
+          {
+            "category": "Observation Window and Outcome Measurement",
+            "severity": "medium",
+            "evidence": "Observation period is fixed at 30 days post assignment; open question notes uncertainty if this is sufficient to capture effect.",
+            "explanation": "A too-short observation window may miss delayed promotion effects or behavioral changes, biasing results.",
+            "recommendation": "Consider exploratory analyses or extensions with longer follow-up to confirm appropriateness of 30-day window."
+          },
+          {
+            "category": "Population Heterogeneity and Stratification",
+            "severity": "medium",
+            "evidence": "Open questions include whether population segments require stratification or separate analysis.",
+            "explanation": "Ignoring heterogeneity that modifies treatment effect can obscure true effects or lead to misleading averages.",
+            "recommendation": "Evaluate key customer segments for effect modification and plan stratified or subgroup analyses accordingly."
+          }
+        ],
+        "unresolved_assumptions": [
+          "The true baseline mean of average card spending is stable and accurately approximated.",
+          "No relevant customer segments require stratified randomization or analysis.",
+          "Operational delivery of personalized vs. generic promotions will be consistent and well-tracked.",
+          "No significant contamination or interference occurs between customers in different treatment arms.",
+          "Thirty days of observation adequately captures the promotion-induced spending changes."
+        ]
+      },
+      "risk_hits": 1,
+      "risk_checks": 1,
+      "numbers_preserved": true,
+      "latency_seconds": 17.779
+    }
+  ]
+}

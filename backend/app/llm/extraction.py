@@ -8,7 +8,7 @@ from app.config import Settings
 from app.llm.structured import run_structured
 from app.schemas.extraction import Extraction, Metadata
 
-PROMPT_VERSION = "extract_v1"
+PROMPT_VERSION = "extract_v2"
 PROMPT = (Path(__file__).parent / "prompts" / f"{PROMPT_VERSION}.txt").read_text()
 
 

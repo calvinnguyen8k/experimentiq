@@ -1,0 +1,9 @@
+{
+  "current_cases_sha256": "460215c31ce8bddd94498b5e00872b9b7fffb38a584521abc39f5fbfa6c53daf",
+  "current_cases_used_by": [
+    "revised-v2.json",
+    "extract-v2.json"
+  ],
+  "prompt_comparison": "Same revised cases; extract_v1 versus extract_v2. Development set, not held-out.",
+  "initial_run": "baseline-v1.json and live.json preserve the initial wording and labels documented in evals/README.md."
+}
