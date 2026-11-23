@@ -68,10 +68,11 @@ class RequestGuard:
                     message = await receive()
                     if message["type"] == "http.disconnect":
                         return
-                    body.extend(message.get("body", b""))
-                    if len(body) > MAX_BODY_BYTES:
+                    chunk = message.get("body", b"")
+                    if len(body) + len(chunk) > MAX_BODY_BYTES:
                         await reject("payload_too_large", "Request exceeds the 24 KiB limit.", 413)
                         return
+                    body.extend(chunk)
                     if not message.get("more_body", False):
                         break
                 delivered = False

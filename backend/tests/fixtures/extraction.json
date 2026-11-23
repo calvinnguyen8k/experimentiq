@@ -1,0 +1,9 @@
+{
+  "population_size": {"value": 100000, "quote": "100,000 eligible customers"},
+  "primary_metric": {"value": "average card spending", "quote": "average card spending"},
+  "metric_type": {"value": "continuous", "quote": "average card spending"},
+  "baseline_mean": null,
+  "baseline_sd": null,
+  "baseline_conversion_rate": null,
+  "target_relative_uplift": {"value": 0.05, "quote": "increase average card spending by 5%"}
+}
