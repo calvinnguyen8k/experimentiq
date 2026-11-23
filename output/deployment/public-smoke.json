@@ -1,0 +1,69 @@
+{
+  "time": "2026-11-23T13:46:42.450Z",
+  "url": "https://experimentiq-omega.vercel.app/",
+  "browser": "Chromium, new isolated context; no saved cookies or authentication",
+  "provider": "Real OpenAI; no request mocks",
+  "result": "passed",
+  "checks": [
+    "four-stage workflow",
+    "explicit confirmation gates",
+    "3140 total sample size",
+    "Markdown report download",
+    "editing invalidates downstream results",
+    "missing SD blocks calculation",
+    "no page errors"
+  ],
+  "requests": [
+    {
+      "path": "/api/v1/experiments/extract",
+      "http_status": 200,
+      "request_id": "f8cb253a-526b-4d88-adb0-8a2696d2570c",
+      "status": "extraction_complete",
+      "metadata": {
+        "model": "gpt-4.1-mini-2025-04-14",
+        "prompt_version": "extract_v2",
+        "latency_ms": 3922,
+        "attempts": 1,
+        "input_tokens": 1512,
+        "output_tokens": 112,
+        "estimated_cost_usd": null
+      }
+    },
+    {
+      "path": "/api/v1/experiments/design",
+      "http_status": 200,
+      "request_id": "ead28cac-bc25-4e4c-9552-eba784724f3d",
+      "status": "proposal_ready",
+      "metadata": {
+        "model": "gpt-4.1-mini-2025-04-14",
+        "prompt_version": "design_v1",
+        "latency_ms": 5183,
+        "attempts": 1,
+        "input_tokens": 890,
+        "output_tokens": 349,
+        "estimated_cost_usd": null
+      }
+    },
+    {
+      "path": "/api/v1/statistics/sample-size",
+      "http_status": 200,
+      "request_id": "101c4530-f58a-4566-9d21-1b6bdd201f8f",
+      "status": "computed"
+    },
+    {
+      "path": "/api/v1/experiments/review",
+      "http_status": 200,
+      "request_id": "8271a4d5-7682-4ed4-a4a9-5fd260352fb9",
+      "status": "review_needs_attention",
+      "metadata": {
+        "model": "gpt-4.1-mini-2025-04-14",
+        "prompt_version": "critic_v1",
+        "latency_ms": 8416,
+        "attempts": 1,
+        "input_tokens": 1501,
+        "output_tokens": 675,
+        "estimated_cost_usd": null
+      }
+    }
+  ]
+}

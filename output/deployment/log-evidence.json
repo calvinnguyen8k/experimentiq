@@ -1,0 +1,90 @@
+{
+  "public_assets_checked": 8,
+  "credential_scan": "passed",
+  "observed_request_metadata": [
+    {
+      "event": "http_request",
+      "request_id": "8271a4d5-7682-4ed4-a4a9-5fd260352fb9",
+      "route": "/api/v1/experiments/review",
+      "status": 200,
+      "latency_ms": 8889,
+      "error_category": null,
+      "validation_failures": 0,
+      "model": "gpt-4.1-mini-2025-04-14",
+      "prompt_version": "critic_v1",
+      "attempts": 1,
+      "input_tokens": 1501,
+      "output_tokens": 675,
+      "estimated_cost_usd": null,
+      "provider_latency_ms": 8416
+    },
+    {
+      "event": "http_request",
+      "request_id": "101c4530-f58a-4566-9d21-1b6bdd201f8f",
+      "route": "/api/v1/statistics/sample-size",
+      "status": 200,
+      "latency_ms": 465,
+      "error_category": null,
+      "validation_failures": 0
+    },
+    {
+      "event": "http_request",
+      "request_id": "ead28cac-bc25-4e4c-9552-eba784724f3d",
+      "route": "/api/v1/experiments/design",
+      "status": 200,
+      "latency_ms": 5660,
+      "error_category": null,
+      "validation_failures": 0,
+      "model": "gpt-4.1-mini-2025-04-14",
+      "prompt_version": "design_v1",
+      "attempts": 1,
+      "input_tokens": 890,
+      "output_tokens": 349,
+      "estimated_cost_usd": null,
+      "provider_latency_ms": 5183
+    },
+    {
+      "event": "http_request",
+      "request_id": "f8cb253a-526b-4d88-adb0-8a2696d2570c",
+      "route": "/api/v1/experiments/extract",
+      "status": 200,
+      "latency_ms": 4450,
+      "error_category": null,
+      "validation_failures": 0,
+      "model": "gpt-4.1-mini-2025-04-14",
+      "prompt_version": "extract_v2",
+      "attempts": 1,
+      "input_tokens": 1512,
+      "output_tokens": 112,
+      "estimated_cost_usd": null,
+      "provider_latency_ms": 3922
+    },
+    {
+      "event": "http_request",
+      "request_id": "298b7c0c-7695-4289-b7da-0a50bb0441e7",
+      "route": "/health",
+      "status": 200,
+      "latency_ms": 2,
+      "error_category": null,
+      "validation_failures": 0
+    },
+    {
+      "event": "http_request",
+      "request_id": "74ab13a1-12a0-430d-b1eb-883c33d416e3",
+      "route": "unmatched",
+      "status": 404,
+      "latency_ms": 8,
+      "error_category": null,
+      "validation_failures": 0
+    },
+    {
+      "event": "http_request",
+      "request_id": "e633c2db-252b-491e-9850-820553c2be1d",
+      "route": "unmatched",
+      "status": 404,
+      "latency_ms": 9,
+      "error_category": null,
+      "validation_failures": 0
+    }
+  ]
+}

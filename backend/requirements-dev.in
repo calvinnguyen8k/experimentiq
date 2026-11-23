@@ -1,0 +1,9 @@
+-r requirements.in
+pytest>=8,<10
+pytest-asyncio>=0.25,<2
+ruff>=0.11,<1
+# Independent statistical reference implementation used by tests only.
+statsmodels>=0.14,<1
+fakeredis[lua]>=2.28,<3
+# fakeredis 2.40 cannot introspect redis-py 8's new deprecation wrappers.
+redis>=5,<8

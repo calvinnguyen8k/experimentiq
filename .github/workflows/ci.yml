@@ -28,7 +28,7 @@ jobs:
       - name: Install backend dependencies
         run: |
           python -m venv backend/.venv
-          backend/.venv/bin/python -m pip install -r backend/requirements.txt
+          backend/.venv/bin/python -m pip install -r backend/requirements-dev.txt
       - name: Backend lint and tests
         working-directory: backend
         run: |

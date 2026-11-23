@@ -4,9 +4,13 @@ A planning workbench for Product Managers and Growth Analysts: turn a synthetic
 experiment idea into traceable inputs, a proposed design, a Python sample-size
 calculation, and an exportable risk review.
 
-**The four-stage local workflow is implemented.** Public deployment and hosted CI
-are separate release checks below. This is planning assistance, not observed
-experiment results or approval to launch.
+**[Open the live app](https://experimentiq-omega.vercel.app)** ·
+[API health](https://experimentiq-api.vercel.app/health) ·
+[Public source](https://github.com/calvinnguyen8k/experimentiq)
+
+The complete four-stage workflow passed in a fresh unauthenticated Chromium context
+on 2026-11-23 with real OpenAI calls and a downloaded Markdown report. This is
+planning assistance, not observed experiment results or approval to launch.
 
 ## Try the complete example
 
@@ -28,11 +32,14 @@ The [copy-ready scenario](docs/complete-synthetic-example.md) explains the input
 Use **Load example with missing data** to demonstrate unknown baselines. Missing
 inputs never produce a guessed sample size; conflicting intake values need correction.
 
-![Statistical planning screen](docs/screenshots/statistics-mocked.png)
+![Live statistical planning screen](output/deployment/03-statistics.png)
 
-Screenshots and the [two-minute walkthrough](output/demo/experimentiq-walkthrough.webm)
-show provider-fixture UI responses with real Python calculations. They are explicitly
-labelled; live OpenAI evaluation results are recorded separately.
+The screenshot above is from the public deployment using real OpenAI calls.
+[Live workflow evidence](output/deployment/public-smoke.json) and the
+[downloaded synthetic report](output/deployment/synthetic-live-report.md) retain
+request IDs and results. The [two-minute walkthrough](output/demo/experimentiq-walkthrough.webm)
+is a separate, explicitly labelled provider-fixture demonstration with real Python
+calculations; it is not a recording of the public live-provider smoke test.
 
 ## Local setup
 
@@ -41,7 +48,7 @@ required for real extraction/design/critique; ordinary tests need no key.
 
 ```sh
 python3 -m venv backend/.venv
-backend/.venv/bin/python -m pip install -r backend/requirements.txt
+backend/.venv/bin/python -m pip install -r backend/requirements-dev.txt
 test -f backend/.env || cp .env.example backend/.env
 cd frontend
 npm ci
@@ -125,7 +132,7 @@ calculator run normally. Tests also intercept errors deliberately. Run build/typ
 checks before browser tests to avoid racing generated Next.js types.
 
 The [CI workflow](.github/workflows/ci.yml) repeats checks without a key. A workflow
-file or local pass is not proof of a successful hosted run. The secret scanner is
+file or local pass alone is not proof of a successful hosted run. The secret scanner is
 an offline pattern check, not a complete secret-detection product.
 
 ## Live evaluation
@@ -148,8 +155,9 @@ This command makes real, billable provider calls. No real customer data is used.
 ## Operations and free deployment
 
 User-selected hosting scope: **free tiers only**. [Deployment runbook](docs/deployment.md)
-covers Vercel Hobby, Render Free, and durable free Redis usage quotas. Hosting being
-free does not make OpenAI calls free. Render's idle service may need to wake first.
+covers Vercel Hobby for both Next.js and FastAPI, with durable free Redis quotas.
+Render rejected Free service creation because the account requires payment details;
+no card or paid plan was added. Hosting being free does not make OpenAI calls free.
 
 Production startup requires HTTPS origins and shared Redis credentials. Quota
 outages fail closed; default caps are 5 requests/peer/minute, 30 global/minute,
@@ -181,15 +189,31 @@ completed work does not hide a remaining release step.
       the supplied assignment brief still lists them. No claim of completion.
 - [ ] Independent user/market validation — no interviews or demand evidence supplied
 - [x] Public GitHub repository created: [experimentiq](https://github.com/calvinnguyen8k/experimentiq)
-- [ ] Source/commit history pushed and successful hosted CI run verified
+- [x] Source/commit history pushed and [hosted CI passed](https://github.com/calvinnguyen8k/experimentiq/actions/runs/45183962597) for `dc4abe5`
 - [x] Production usage-protection implementation and tests; free-hosting configuration
-- [ ] Production secrets/quotas configured and live deployment verified
-- [ ] Full public/incognito workflow verified
+- [x] Production secrets/quotas configured and live deployment verified
+- [x] Full public workflow verified in a fresh isolated Chromium context (incognito equivalent)
 - [x] README, screenshots and [two-minute labelled walkthrough](output/demo/experimentiq-walkthrough.webm)
 - [x] [One-page reflection PDF](output/pdf/experimentiq-reflection.pdf), for owner review/personalization
-- [ ] Accessible final deployment/demo links verified for submission
+- [x] Public app, API, repository, demo, reflection and v2 issue links verified without login
 - [x] [GitHub v2 issue #1](https://github.com/calvinnguyen8k/experimentiq/issues/1) published
 
 The [market evidence note](docs/market-evidence.md) distinguishes observed usability
 feedback from market validation. No checklist item is checked solely to make the
 assignment appear complete.
+
+## Public release evidence, 2026-11-23
+
+Both production URLs returned HTTP 200 without authentication. The live smoke test
+completed extraction, design, calculation and critique with four successful API
+responses, confirmed 3,140 total units and downloaded the report. Missing SD and
+editing invalidation were checked in the same browser session with no request mocks.
+The [Redis/CORS checks](output/deployment/quota-cors.json) observed a durable daily
+counter, an actual Lua quota rejection in an isolated namespace, accepted the
+frontend origin and rejected an unrelated origin. Ordinary tests verify fail-closed
+quota outages without disrupting production. See [deployment instructions](docs/deployment.md).
+
+[Production log evidence](output/deployment/log-evidence.json) contains only request
+metadata. The public HTML and seven JavaScript assets were checked against the
+configured backend credentials; none were present. Repository, demo, reflection
+and issue URLs returned HTTP 200 without login.

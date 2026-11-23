@@ -77,9 +77,9 @@ flowchart LR
    Client report generation escapes untrusted Markdown/HTML. Provider retention
    is governed by provider policy; `store=False` is not a zero-retention promise.
 9. **Deployment remains free-tier only.** User chose free hosting: Vercel Hobby
-   frontend, Render Free Python API, free durable Redis for quotas. Account access,
+   frontend and a separate Vercel Hobby Python API, free durable Redis for quotas. Account access,
    secret entry, verified deployment URLs and incognito checks are release gates.
-   Render can cold-start after inactivity; quotas fail closed on external outages.
+   Functions may cold-start; quotas fail closed on external outages.
    No paid plan, trial upgrade, card entry, or service purchase is authorized.
 10. **Evaluation is evidence, not marketing.** Twenty synthetic cases exercise
     extraction, design family and critique. Real runs are saved with model/prompt
@@ -92,7 +92,8 @@ flowchart LR
 
 Python 3.13 and Node 22 are the verified runtime targets. Lockfile resolutions are
 checked in. SciPy is runtime; Statsmodels, Fakeredis/Lua, pytest and Ruff support
-verification (currently one requirements file for straightforward local/CI setup).
+verification. Runtime and development locks are now separate to exclude test-only
+packages from the Python function bundle; the tested versions are preserved.
 Redis-py is bounded below 8 because Fakeredis 2.40's wrapper introspection fails
 with redis-py 8.2; the quota tests reproduce that integration need.
 Next.js builds use Webpack to avoid restricted Turbopack worker port binding.
@@ -109,3 +110,22 @@ avoid racing generated files. No hosted CI success is inferred from local checks
 - [Render free services](https://render.com/docs/free)
 - [Render Python version selection](https://render.com/docs/python-version)
 - [Vercel monorepo deployment](https://vercel.com/docs/monorepos)
+
+## Free hosting adaptation, 2026-11-23
+
+Render returned HTTP 402 requiring payment information when creating a Free service.
+The user authorized free hosting only, so both services use the existing Vercel
+Hobby account. FastAPI remains a separate Python deployment with its original
+`app/main.py` entrypoint and lifespan-managed clients. A 60-second host limit leaves
+room for the application's 45-second AI deadline. Shared Redis limits remain required
+across function instances. Runtime requirements omit test-only dependencies;
+`.vercelignore` explicitly excludes local credentials and virtual environments.
+The original Render blueprint remains an optional alternative, not an active service.
+
+[FastAPI deployment and lifespan support](https://vercel.com/docs/frameworks/backend/fastapi)
+and [Python dependency and bundle rules](https://vercel.com/docs/functions/runtimes/python).
+
+Vercel initially preferred the test-only `pyproject.toml` over `requirements.txt`,
+causing a missing-HTTPX startup failure. Excluding that configuration from uploads
+ensures the runtime lock is installed. The generated host virtual environment is
+retained; only the local virtual environment is excluded from uploads.
