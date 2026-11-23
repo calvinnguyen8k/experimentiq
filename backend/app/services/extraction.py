@@ -6,6 +6,7 @@ from app.schemas.extraction import (
     ExperimentInput,
     ExtractionResponse,
     Facts,
+    MetricWordingNote,
     Question,
 )
 
@@ -26,6 +27,7 @@ def build_response(
     run.extraction.check_evidence(data.objective)
     facts = {}
     conflicts = []
+    metric_wording_note = None
     for name in type(run.extraction).model_fields:
         supplied = getattr(data, name)
         extracted = getattr(run.extraction, name)
@@ -33,7 +35,15 @@ def build_response(
             facts[name] = dict(
                 value=supplied, source="user_provided", evidence=None, requires_confirmation=False
             )
-            if extracted is not None and supplied != extracted.value:
+            if extracted is not None and supplied != extracted.value and name == "primary_metric":
+                metric_wording_note = MetricWordingNote(
+                    supplied_value=supplied,
+                    extracted_value=extracted.value,
+                    message="Your metric wording differs from the AI extraction. "
+                    "Your definition is retained. Different wording alone does not prove a "
+                    "conflict; check that both describe the outcome you intend to measure.",
+                )
+            elif extracted is not None and supplied != extracted.value:
                 conflicts.append(
                     Conflict(
                         field=name,
@@ -106,5 +116,6 @@ def build_response(
         facts=normalized,
         questions=questions,
         conflicts=conflicts,
+        metric_wording_note=metric_wording_note,
         metadata=run.metadata,
     )

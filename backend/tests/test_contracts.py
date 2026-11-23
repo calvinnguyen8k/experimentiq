@@ -117,3 +117,34 @@ def test_null_extraction_does_not_invent_type_or_baselines():
         "population_size",
         "target_relative_uplift",
     }
+
+
+def test_metric_wording_difference_is_visible_without_asserting_a_conflict():
+    data = ExperimentInput(
+        objective=OBJECTIVE,
+        population_size=100000,
+        primary_metric="mean spending per customer",
+        metric_type="continuous",
+        baseline_mean=200,
+        baseline_sd=80,
+        target_relative_uplift=0.05,
+    )
+    result = build_response(data, make_run(), "test")
+    assert result.status == "extraction_complete"
+    assert result.conflicts == []
+    assert result.facts.primary_metric.value == "mean spending per customer"
+    assert result.metric_wording_note.extracted_value == "average card spending"
+    assert "does not prove a conflict" in result.metric_wording_note.message
+
+
+def test_wording_note_does_not_hide_a_real_outcome_type_conflict():
+    data = ExperimentInput(
+        objective=OBJECTIVE,
+        primary_metric="mean spending per customer",
+        metric_type="binary",
+        baseline_conversion_rate=0.1,
+    )
+    result = build_response(data, make_run(), "test")
+    assert result.status == "needs_attention"
+    assert {conflict.field for conflict in result.conflicts} == {"metric_type"}
+    assert result.metric_wording_note is not None

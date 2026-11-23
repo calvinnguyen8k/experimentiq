@@ -11,7 +11,7 @@ export default defineConfig({
     { command: "../backend/.venv/bin/uvicorn tests.e2e_api:app --app-dir ../backend --host 127.0.0.1 --port 8100 --no-access-log",
       url: "http://127.0.0.1:8100/health", reuseExistingServer: false },
     { command: "npm run dev -- --port 3100", url: "http://127.0.0.1:3100",
-      env: { NEXT_PUBLIC_API_URL: "http://127.0.0.1:8100", NEXT_TELEMETRY_DISABLED: "1" },
+      env: { NEXT_PUBLIC_API_URL: "http://127.0.0.1:8100", NEXT_TELEMETRY_DISABLED: "1", EXPERIMENTIQ_E2E: "1" },
       reuseExistingServer: false, timeout: 120_000 },
   ],
 });

@@ -61,3 +61,37 @@ test("mobile intake fits the viewport and supports extraction", async ({ page },
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   await page.screenshot({ path: testInfo.outputPath("mobile-extraction.png"), fullPage: true });
 });
+
+test("correcting outcome type clears incompatible inputs and resolves the reported conflict", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Load synthetic example" }).click();
+  await page.getByText("Optional confirmed inputs").click();
+  await page.getByLabel("Primary metric", { exact: true }).fill("mean spending per customer");
+  await page.getByLabel("Outcome type", { exact: true }).selectOption("binary");
+  await page.getByLabel("Baseline conversion rate", { exact: true }).fill("0.1");
+  await expect(page.getByLabel("Baseline mean", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Extract experiment facts" }).click();
+  await expect(page.getByText("Resolve conflicting assumptions")).toBeVisible();
+  await page.getByLabel("Outcome type", { exact: true }).selectOption("continuous");
+  await expect(page.getByLabel("Baseline conversion rate", { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel("Baseline mean", { exact: true })).toHaveValue("");
+  await page.getByRole("button", { name: "Extract experiment facts" }).click();
+  await expect(page.getByText("A few details need your attention")).toBeVisible();
+  await expect(page.getByText("Resolve conflicting assumptions")).toHaveCount(0);
+  await expect(page.getByText("Metric wording note", { exact: true })).toBeVisible();
+  await expect(page.getByText("What is the baseline standard deviation in the same units?")).toBeVisible();
+  await page.getByLabel("Outcome type", { exact: true }).selectOption("binary");
+  await expect(page.getByLabel("Baseline conversion rate", { exact: true })).toHaveValue("");
+});
+
+test("invalid relative effect inputs identify the exact fields to fix", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Load synthetic example" }).click();
+  await page.getByText("Optional confirmed inputs").click();
+  await page.getByLabel("Outcome type", { exact: true }).selectOption("continuous");
+  await page.getByLabel("Baseline mean", { exact: true }).fill("0");
+  await page.getByLabel("Target relative increase", { exact: true }).fill("0.05");
+  await page.getByRole("button", { name: "Extract experiment facts" }).click();
+  await expect(page.getByRole("alert", { name: "Extraction could not finish" })).toContainText("baseline mean greater than zero");
+  await expect(page.getByLabel("Baseline mean", { exact: true })).toHaveAttribute("aria-invalid", "true");
+});

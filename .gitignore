@@ -11,6 +11,7 @@ __pycache__/
 htmlcov/
 node_modules/
 .next/
+.next-e2e/
 out/
 *.tsbuildinfo
 next-env.d.ts

@@ -65,6 +65,10 @@ fact keys use a fixed schema. Exact supporting quote required for each non-null
 model field; quote must appear in objective. Quoted extraction still needs human
 confirmation. Model cannot set source, confirmation state, questions, or status.
 Conflicting explicit/extracted values keep the explicit value and record both.
+Primary-metric wording differences alone are not proven semantic contradictions:
+retain the explicit definition and both labels in optional `metric_wording_note`
+(`supplied_value`, `extracted_value`, `message`). This is an informational note;
+numeric and outcome-type differences still trigger `needs_attention`.
 
 Status priority: `needs_attention` for conflicts or incompatible merged values,
 then `missing_information` for missing/confirmation questions, otherwise
@@ -78,6 +82,8 @@ numeric inputs receive attention warnings; they are never used for calculation.
 
 Envelope: `{"error":{"code":"...","message":"...","request_id":"...","fields":[]}}`.
 All documented errors have a generated request ID, safe text, and field names only.
+Validation uses fixed corrective messages for the specific failed constraint, with
+affected field names even for cross-field errors. No raw validation input is echoed.
 
 | HTTP | Code | Meaning |
 |---|---|---|
@@ -107,6 +113,9 @@ use decimals for rates with explicit hints. All controls have labels, errors use
 alerts, results use a live region, keyboard focus is visible. Edits clear previous
 results/errors. Requests disable editing; unmount aborts in-flight work. There is
 no fixture-success mode or API key field in the shipped UI.
+The selected outcome type shows only compatible baseline inputs. Changing to
+Continuous clears the conversion rate; changing to Binary clears mean/SD, as
+explained beside the selector. Unknown type shows all baseline inputs.
 
 ## Future typed contracts (not implemented this increment)
 

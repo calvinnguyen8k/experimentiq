@@ -22,7 +22,10 @@ export default function Home() {
   useEffect(() => () => active.current?.abort(), []);
 
   function update(name: keyof FormValues, value: string) {
-    setForm((old) => ({ ...old, [name]: value }));
+    setForm((old) => ({ ...old, [name]: value,
+      ...(name === "metric_type" && value === "continuous" ? { baseline_conversion_rate: "" } : {}),
+      ...(name === "metric_type" && value === "binary" ? { baseline_mean: "", baseline_sd: "" } : {}),
+    }));
     setResult(null); setError(null);
   }
 
@@ -84,9 +87,12 @@ export default function Home() {
                 <summary>Optional confirmed inputs <span>Fill in what you know</span></summary>
                 <p className="muted">Leave unknowns blank. Values entered here are treated as your confirmed inputs. Correct conflicting prose before rerunning.</p>
                 <div className="form-grid">
-                  <div className="field"><label htmlFor="metric_type">Outcome type</label><select id="metric_type" value={form.metric_type} onChange={(e) => update("metric_type", e.target.value)}><option value="">Not yet known</option><option value="continuous">Continuous · a mean</option><option value="binary">Binary · a conversion rate</option></select></div>
+                  <div className="field"><label htmlFor="metric_type">Outcome type</label><select id="metric_type" value={form.metric_type} onChange={(e) => update("metric_type", e.target.value)} aria-describedby="metric-type-hint" aria-invalid={error?.fields.includes("metric_type") || undefined}><option value="">Not yet known</option><option value="continuous">Continuous · a mean</option><option value="binary">Binary · a conversion rate</option></select><span id="metric-type-hint" className="field-hint">Average spending is continuous; converted/not converted is binary. Changing type clears incompatible baseline inputs.</span></div>
                   <div className="field"><label htmlFor="primary_metric">Primary metric</label><input id="primary_metric" maxLength={200} value={form.primary_metric} onChange={(e) => update("primary_metric", e.target.value)} placeholder="e.g. mean spending per customer over 30 days" /></div>
-                  {numberFields.map(({ name, hint, min, max, step }) => <div className="field" key={name}>
+                  {numberFields.filter(({ name }) =>
+                    !(form.metric_type === "continuous" && name === "baseline_conversion_rate") &&
+                    !(form.metric_type === "binary" && ["baseline_mean", "baseline_sd"].includes(name))
+                  ).map(({ name, hint, min, max, step }) => <div className="field" key={name}>
                     <label htmlFor={name}>{labels[name]}</label><input id={name} type="number" min={min} max={max} step={step || "any"}
                       value={form[name]} onChange={(e) => update(name, e.target.value)} aria-describedby={`${name}-hint`} aria-invalid={error?.fields.includes(name) || undefined} />
                     <span id={`${name}-hint`} className="field-hint">{hint}</span></div>)}
@@ -107,6 +113,7 @@ export default function Home() {
           {result && <>
             <div className={`result-status ${result.status === "needs_attention" ? "attention" : ""}`}><strong>{result.status === "needs_attention" ? "Resolve conflicting assumptions" : result.status === "missing_information" ? "A few details need your attention" : "Intake complete"}</strong><p>Extraction only. No design validation or sample size has been calculated.</p></div>
             {result.conflicts.length > 0 && <div className="conflict-list"><h3>Conflicts to resolve</h3>{result.conflicts.map((conflict, index) => <p key={index}><strong>{labels[conflict.field as FieldName] || conflict.field}: </strong>{conflict.message}{conflict.supplied_value !== null && <> Form: {conflict.supplied_value}. Prose: {conflict.extracted_value}.</>}</p>)}</div>}
+            {result.metric_wording_note && <aside className="privacy-note" style={{ marginTop: 16 }}><strong>Metric wording note</strong><p>{result.metric_wording_note.message}</p><p>Your metric: {result.metric_wording_note.supplied_value}. AI wording: {result.metric_wording_note.extracted_value}.</p></aside>}
             <dl className="fact-list">{(Object.keys(labels) as FieldName[]).map((name) => {
               const fact = result.facts[name];
               return <div className="fact-row" key={name}><dt>{labels[name]}</dt><dd>

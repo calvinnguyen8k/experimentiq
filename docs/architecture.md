@@ -28,7 +28,10 @@ flowchart LR
    fields are `user_provided`. Future proposals are `llm_suggested`; mathematical
    transformations are `derived`. Future statistics accept confirmed inputs only.
 4. **Structured values win without hiding conflicts.** A differing extraction is
-   retained in a conflict record; response status becomes `needs_attention`.
+   retained in a conflict record; numeric/type differences cause `needs_attention`.
+   Primary-metric text differences are an informational wording note, since string
+   inequality cannot establish a semantic contradiction. The explicit metric wins;
+   we do not claim either equivalence or contradiction from wording alone.
    Missing questions are generated from field rules, not guessed by the model.
 5. **Stateless, conservative local protection.** A 24 KiB body cap, per-client and
    global process rate limits, and a concurrent-call cap bound work. Client identity

@@ -29,8 +29,8 @@ test -f .env.local || cp .env.example .env.local
 Edit `backend/.env` locally and set `OPENAI_API_KEY`. Never paste a key into the
 browser, source code, a commit, or chat. The backend reads `.env` relative to its
 working directory, so use the commands below. `OPENAI_MODEL` defaults to
-`gpt-4.1-mini` and is configurable. Model access and quality have not been tested
-against a live account. Optional token prices enable approximate cost reporting;
+`gpt-4.1-mini` and is configurable. A live synthetic extraction was verified on
+2026-11-23; broader model quality remains unevaluated. Optional token prices enable approximate cost reporting;
 otherwise cost is null. Recheck prices when changing model/provider settings.
 
 Terminal 1, from repository root:
@@ -55,8 +55,7 @@ extraction. There is no simulated-success switch in the production application.
 
 ## Try the synthetic scenario
 
-Click **Load synthetic example**, then **Extract experiment facts**. Expected
-real-model behavior, still needing a key-backed verification:
+Click **Load synthetic example**, then **Extract experiment facts**. Expected behavior:
 
 - Population 100,000, continuous average card spending, relative increase 0.05.
 - Evidence quotes and a confirmation requirement for every prose-extracted value.
@@ -68,6 +67,9 @@ Use decimals: `0.05` means 5%, `0.10` means 10%. Leave unknown fields blank. A
 conflicting form value wins, but a conflict warning asks you to reconcile the prose.
 Editing clears stale results. Continuous mean/SD and binary conversion inputs
 cannot be combined under a selected outcome type.
+The form shows only the relevant baseline fields and clears incompatible baseline
+inputs when you change outcome type. Different primary-metric wording is shown as
+an informational note; numeric/outcome-type conflicts still need resolution.
 
 ## Architecture and decisions
 
@@ -115,7 +117,8 @@ npx playwright install chromium
 npm test
 ```
 
-Browser tests start their own servers on 3100/8100 and invoke the actual frontend,
+Browser tests use an isolated `.next-e2e` build directory, start their own servers
+on 3100/8100, and invoke the actual frontend,
 FastAPI application, official OpenAI SDK, and validators. Only OpenAI HTTP is
 mocked for success scenarios. Additional UI error scenarios intercept the API.
 The fixture service lives exclusively in `backend/tests/e2e_api.py`; it is never
@@ -163,10 +166,10 @@ Vercel remains the intended frontend host. Nothing has been published.
 - [x] PRD with explicit unvalidated hypotheses
 - [x] Technical specification, architecture notes, agent instructions, cursor rules
 - [x] Extraction implementation with input validation, missing questions, provenance
-- [x] 57 backend tests, 5 browser tests, lint/typecheck, and production build pass locally
+- [x] 64 backend tests, 7 browser tests, lint/typecheck, and production build pass locally
 - [x] Local secret pattern check and metadata-only request logging
 - [x] Five meaningful local commits (public repository still pending)
-- [ ] Successful live OpenAI extraction in the UI (key required)
+- [x] Successful live OpenAI extraction of the synthetic scenario in the UI
 - [ ] AI design generation and explicit confirmation flow
 - [ ] Independently tested binary/continuous sample-size engine
 - [ ] Critique, consistency checks, Markdown report/export

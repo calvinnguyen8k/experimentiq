@@ -119,3 +119,38 @@ def test_unexpected_exception_is_safe_and_releases_capacity():
 def test_future_routes_are_not_claimed_as_implemented(client):
     assert client.post("/api/v1/experiments/review", json={}).status_code == 404
     assert client.post("/api/v1/statistics/sample-size", json={}).status_code == 404
+
+
+@pytest.mark.parametrize(
+    "values,message,fields",
+    [
+        (
+            {"metric_type": "binary", "baseline_mean": 0.02, "baseline_sd": 0.02},
+            "You selected Binary. Clear baseline mean",
+            {"metric_type", "baseline_mean", "baseline_sd"},
+        ),
+        (
+            {"metric_type": "continuous", "baseline_conversion_rate": 0.1},
+            "You selected Continuous. Clear baseline conversion rate",
+            {"metric_type", "baseline_conversion_rate"},
+        ),
+        (
+            {"baseline_conversion_rate": 0.9, "target_relative_uplift": 0.2},
+            "imply a target of 100% or more",
+            {"baseline_conversion_rate", "target_relative_uplift"},
+        ),
+        (
+            {"baseline_mean": 0, "target_relative_uplift": 0.05},
+            "baseline mean greater than zero",
+            {"baseline_mean", "target_relative_uplift"},
+        ),
+        ({"baseline_sd": 0}, "standard deviation must be greater than zero", {"baseline_sd"}),
+    ],
+)
+def test_validation_explains_the_specific_problem(client, fake, values, message, fields):
+    response = client.post(PATH, json={"objective": OBJECTIVE, **values})
+    assert response.status_code == 422
+    error = response.json()["error"]
+    assert message in error["message"]
+    assert set(error["fields"]) == fields
+    assert fake.calls == 0

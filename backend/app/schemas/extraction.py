@@ -1,6 +1,7 @@
 from typing import Annotated, Generic, Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic_core import PydanticCustomError
 
 MetricType = Literal["binary", "continuous"]
 ShortText = Annotated[str, Field(min_length=1, max_length=200)]
@@ -40,15 +41,19 @@ class ExperimentInput(StrictModel):
     def compatible_assumptions(self):
         if self.metric_type == "binary":
             if self.baseline_mean is not None or self.baseline_sd is not None:
-                raise ValueError("Binary outcomes require a conversion rate, not mean/SD.")
+                raise PydanticCustomError(
+                    "binary_with_mean", "Incompatible binary baseline fields."
+                )
         if self.metric_type == "continuous" and self.baseline_conversion_rate is not None:
-            raise ValueError("Continuous outcomes require mean/SD, not a conversion rate.")
+            raise PydanticCustomError("continuous_with_rate", "Incompatible continuous baseline.")
         if self.baseline_conversion_rate is not None and self.target_relative_uplift is not None:
             if self.baseline_conversion_rate * (1 + self.target_relative_uplift) >= 1:
-                raise ValueError("The target conversion rate must be less than one.")
+                raise PydanticCustomError(
+                    "target_rate_out_of_range", "Target rate is out of range."
+                )
         if self.baseline_mean is not None and self.target_relative_uplift is not None:
             if self.baseline_mean <= 0:
-                raise ValueError("Relative increase requires a positive baseline mean.")
+                raise PydanticCustomError("relative_nonpositive_mean", "Mean must be positive.")
         return self
 
 
@@ -107,6 +112,12 @@ class Conflict(StrictModel):
     message: str
 
 
+class MetricWordingNote(StrictModel):
+    supplied_value: str
+    extracted_value: str
+    message: str
+
+
 class Metadata(StrictModel):
     model: str
     prompt_version: str
@@ -124,6 +135,7 @@ class ExtractionResponse(StrictModel):
     facts: Facts
     questions: list[Question]
     conflicts: list[Conflict]
+    metric_wording_note: MetricWordingNote | None = None
     statistics_status: Literal["not_implemented"] = "not_implemented"
     metadata: Metadata
 

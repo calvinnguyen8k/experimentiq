@@ -8,10 +8,10 @@ from openai import AsyncOpenAI
 
 from app.api.middleware import RequestGuard, error_response
 from app.api.routes import router
+from app.api.validation import validation_feedback
 from app.config import Settings
 from app.errors import ServiceError
 from app.llm.extraction import Extractor, OpenAIExtractor
-from app.schemas.extraction import ExperimentInput
 from app.services.limits import RequestLimits
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -68,17 +68,9 @@ def create_app(settings: Settings | None = None, extractor: Extractor | None = N
     @app.exception_handler(RequestValidationError)
     async def invalid_input(request: Request, exc: RequestValidationError):
         # Pydantic's default error body echoes input; do not expose it.
-        known = set(ExperimentInput.model_fields)
-        fields = sorted(
-            {str(part) for error in exc.errors() for part in error["loc"] if part in known}
-        )
+        message, fields = validation_feedback(exc.errors())
         request.state.error_category = "invalid_input"
         request.state.validation_failures = len(exc.errors())
-        message = (
-            "Check the indicated fields and their allowed ranges. "
-            "Use mean/SD for continuous outcomes or a rate for binary outcomes; "
-            "relative increases require a positive mean or a target rate below 1."
-        )
         return error_response(request.state.request_id, "invalid_input", message, 422, fields)
 
     app.include_router(router)

@@ -34,6 +34,9 @@ export const extractionResponse = z.object({
     field: z.string(), supplied_value: z.union([z.string(), z.number()]).nullable(),
     extracted_value: z.union([z.string(), z.number()]).nullable(), message: z.string(),
   })),
+  metric_wording_note: z.object({
+    supplied_value: z.string(), extracted_value: z.string(), message: z.string(),
+  }).nullable().default(null),
   statistics_status: z.literal("not_implemented"),
   metadata: z.object({
     model: z.string(), prompt_version: z.string(), latency_ms: z.number(),
