@@ -40,13 +40,15 @@ observed.
 Click **Load complete synthetic example**, review the populated fields, then click
 **Extract experiment facts**. The expected status is **Intake complete**, with no
 missing questions. A metric-wording note may appear if the AI paraphrases the metric.
+Then click **Generate experiment design** to open the proposed design screen.
 
 The preset does not auto-submit, bypass OpenAI, or fabricate output. Its numbers
 become user-provided inputs because the user explicitly selects and submits the
 demo. **Load example with missing data** resets the fields and demonstrates the
 missing-information workflow instead.
 
-“Complete” describes current intake completeness. The design, statistical
-calculation, risk review, and export stages remain unimplemented. The alpha,
+“Complete” describes current intake completeness. A design draft can now be
+generated; statistical calculation, independent risk review, and export remain
+unimplemented. The alpha,
 power, assignment, and observation-window details are narrative context for future
 stages; this increment does not calculate a sample size or validate these plans.

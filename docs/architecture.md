@@ -1,6 +1,6 @@
 # Architecture and decisions
 
-Revision 1 — 2026-11-23. Scope: local extraction vertical slice.
+Revision 2 — 2026-11-23. Scope: local intake and design proposal.
 
 ```mermaid
 flowchart LR
@@ -11,16 +11,24 @@ flowchart LR
     VALID --> MERGE[Merge explicit inputs / flag conflicts]
     MERGE --> QUESTIONS[Deterministic missing questions]
     QUESTIONS --> UI
+    UI -->|Generate design| DESIGN[OpenAI design_v1 proposal]
+    DESIGN --> DRAFT[Validated suggestions + unchanged planning inputs]
+    DRAFT --> UI
 ```
 
 1. **Python owns interpretation and validation.** FastAPI/Pydantic make contracts
    executable and keep future statistics beside orchestration. Next.js renders the
    workflow and never receives an API key. Browser JSON calls use an explicit CORS
    allowlist. Separate services preserve the handoff's Vercel/Python deployment path.
-2. **One extraction call, no agent framework.** Official async OpenAI SDK,
+2. **Separate explicit stages, no agent framework.** Official async OpenAI SDK,
    `responses.parse(text_format=Extraction)`, `store=False`, a versioned prompt,
    bounded output, one transport retry, and one schema/evidence repair attempt.
    An overall deadline bounds the whole operation. No fake-success fallback.
+   Extraction and design share a structured-call helper for identical error,
+   retry, usage and timeout behavior. Each stage has its own schema and prompt.
+   Design is a new user-triggered call, using validated form inputs and objective;
+   no client-supplied extraction provenance is trusted. Missing baselines are
+   retained as null in the separate immutable planning-input snapshot.
 3. **Evidence is necessary but not semantic proof.** Each prose extraction carries
    an exact substring from the objective. Invalid quotes reject the response. An
    exact quote cannot prove the LLM interpreted it correctly, so all prose values

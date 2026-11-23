@@ -1,0 +1,14 @@
+{
+  "design_family": "independent_two_arm",
+  "hypothesis": "Personalized promotions increase average 30-day card spending compared with generic promotions.",
+  "treatment": "Personalized credit-card promotions.",
+  "control": "Generic credit-card promotions under the same delivery conditions.",
+  "randomization_unit": "Individual eligible customer, assigned once before exposure.",
+  "primary_metric": "average card spending",
+  "observation_period": "30 days after assignment for every customer; confirm this window before launch.",
+  "allocation": "1:1 random assignment between treatment and control.",
+  "rationale": "Random assignment and equal follow-up make the two promotional policies comparable. This is a proposed plan, not a statistical validation.",
+  "assumptions": ["Customers can be treated as independent units without material spillovers."],
+  "open_questions": ["Confirm how overlapping campaigns will be excluded."],
+  "limitations": ["Sample-size planning and independent risk review have not been performed."]
+}

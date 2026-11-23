@@ -1,6 +1,6 @@
 # ExperimentIQ technical specification
 
-Revision 1, 2026-11-23. Implemented scope: **extraction only**. This document extends
+Revision 2, 2026-11-23. Scope: **extraction and design proposal**. This document extends
 the handoff; future contracts below are design commitments, not working endpoints.
 
 ## Runtime and structure
@@ -116,12 +116,53 @@ no fixture-success mode or API key field in the shipped UI.
 The selected outcome type shows only compatible baseline inputs. Changing to
 Continuous clears the conversion rate; changing to Binary clears mean/SD, as
 explained beside the selector. Unknown type shows all baseline inputs.
+Two explicit demo buttons load either a complete synthetic preset (objective plus
+confirmed inputs) or the original incomplete objective. The complete preset uses
+population 100,000, a continuous spending metric, mean 200 USD, SD 100 USD, and
+relative increase 0.05; conversion rate remains null because it is inapplicable.
+It opens the input section and explains that values are fictional demo assumptions,
+not AI-inferred facts. Loading never submits automatically. Successful full intake
+has no missing questions; it can then proceed to design generation. This does not
+implement numerical statistics.
 
-## Future typed contracts (not implemented this increment)
+## Design proposal increment
 
-- `ExperimentDesign`: hypothesis, treatment/control, randomization_unit,
-  primary_outcome, observation_period, allocation ratio, assumptions. Each proposed
-  field carries `llm_suggested` provenance; no assumed numeric baseline accepted.
+`POST /api/v1/experiments/design` accepts the same `ExperimentInput` as extraction.
+The frontend enables **Generate experiment design** after a successful extraction,
+including when baselines are missing; unresolved extraction conflicts disable it.
+Editing/reloading an example clears both extraction and design. This endpoint can
+also be used directly; it validates inputs but does not claim a completed extraction.
+
+The backend sends the original objective and explicitly entered, validated inputs
+to a separate `design_v1` prompt. It does not trust client-supplied provenance or
+promote prose extractions to confirmed inputs. No second extraction call is needed.
+The returned `planning_inputs` is the unchanged validated request, never LLM output.
+
+`DesignDraft`: design_family (`independent_two_arm`, `unsupported`, `unclear`),
+hypothesis, treatment, control, randomization_unit, primary_metric,
+observation_period, allocation, rationale, assumptions, open_questions, limitations.
+Text fields are bounded; unknown/unsupported fields may be null. A draft in the
+independent-two-arm family must provide all seven core design fields. All generated
+fields are suggestions. The explicit primary metric, if supplied, is retained and
+marked `user_provided`; otherwise the generated metric is `llm_suggested`.
+
+`DesignResponse`: request_id, status (`proposal_ready` or `needs_attention` for
+unsupported/unclear families), design, source (`llm_suggested`), metric_source,
+planning_inputs, statistics_status (`not_implemented`), metadata. All numeric
+planning inputs remain unchanged, including null mean/SD. The proposal cannot
+provide an executable statistical result. A proposal is not a validated design.
+
+Same body/rate/concurrency limits, error envelope, transport/schema retry budget,
+45-second stage deadline, and metadata logging as extraction. Provider failures
+leave extraction visible and allow retrying design. The UI provides a distinct
+proposal screen, Back to intake control, and explicit planned statistics/review
+steps; no dead-end button that pretends those stages are implemented.
+
+## Remaining future typed contracts
+
+- Extend `DesignDraft` into the final reviewed experiment design when connecting
+  deterministic statistics and the independent critic. Suggestions never supply
+  assumed numerical baselines to the statistical engine.
 - `StatisticalRequest`: design_family (`independent_two_arm` only), metric_type,
   confirmed numeric baselines, effect_type (`absolute`/`relative`), effect_value,
   alpha (default .05), power (.80), allocation_ratio (treatment/control, 1), pool.
@@ -159,7 +200,8 @@ engine; no calculator is delivered in this increment.
 
 1. Current: validate contracts, missing values, evidence, conflicts, error mapping,
    rate/body limits, provider SDK request/response handling, UI workflow and build.
-2. Design generation and confirmation interaction.
+2. Current: design generation, visible suggestions, immutable input snapshots,
+   missing-baseline progression, unsupported/unclear states, retry/back/edit flow.
 3. SciPy-based statistics with independently verified reference tests.
 4. Critique, contradiction checks, Markdown export.
 5. ~20 synthetic evaluation cases, real model scoring, production hardening and

@@ -1,6 +1,6 @@
 # ExperimentIQ product requirements
 
-Status: implementation increment 1; validation hypotheses are unverified.
+Status: implementation increment 2; validation hypotheses are unverified.
 
 **User and problem.** Product Managers and Growth Analysts need to turn vague A/B
 test ideas into reviewable designs. Analytics Leads need to see missing assumptions
@@ -15,11 +15,12 @@ deterministic statistical checks, and actionable methodological concerns.
 evidence → supply missing inputs → review a proposed design → examine deterministic
 sample-size feasibility → review risks → export Markdown.
 
-**This increment.** A usable intake form, optional confirmed inputs, OpenAI structured
-extraction, server-side validation, provenance, missing questions, recoverable errors,
-and tests. No calculations or generated design recommendations yet.
+**Implemented scope.** A usable intake form, complete/incomplete synthetic presets,
+OpenAI structured extraction, server validation, provenance, missing questions,
+recoverable errors, and a separate generated design proposal with back/edit flow.
+No numerical calculations or independent risk review yet.
 
-**MVP next.** Proposal, independent two-arm binary/continuous sample sizes, critique,
+**MVP next.** Independent two-arm binary/continuous sample sizes, critique,
 consistency checks, Markdown export, synthetic evaluations, monitoring, deployment.
 No accounts, history, uploads, real customer data, RAG, or experiment execution.
 

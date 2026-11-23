@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import httpx
 
@@ -40,4 +41,11 @@ def provider_response(data=None, *, status="completed", refusal=False):
 
 
 def successful_transport(request):
+    payload = json.loads(request.content)
+    if payload["text"]["format"]["name"] == "DesignDraft":
+        return httpx.Response(200, json=provider_response(design_data()))
     return httpx.Response(200, json=provider_response())
+
+
+def design_data():
+    return json.loads((Path(__file__).parent / "fixtures" / "design.json").read_text())

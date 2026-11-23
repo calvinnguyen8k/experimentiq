@@ -4,6 +4,7 @@ import httpx
 from openai import AsyncOpenAI
 
 from app.config import Settings
+from app.llm.design import OpenAIDesigner
 from app.llm.extraction import OpenAIExtractor
 from app.main import create_app
 from tests.provider_fixture import successful_transport
@@ -19,4 +20,4 @@ client = AsyncOpenAI(
     max_retries=0,
     http_client=httpx.AsyncClient(transport=httpx.MockTransport(successful_transport)),
 )
-app = create_app(settings, OpenAIExtractor(settings, client))
+app = create_app(settings, OpenAIExtractor(settings, client), OpenAIDesigner(settings, client))

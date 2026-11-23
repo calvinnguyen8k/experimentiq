@@ -47,6 +47,26 @@ export const extractionResponse = z.object({
 export type ExtractionResponse = z.infer<typeof extractionResponse>;
 export type FormValues = { objective: string } & Record<FieldName, string>;
 
+export const designResponse = z.object({
+  request_id: z.string(), status: z.enum(["proposal_ready", "needs_attention"]),
+  source: z.literal("llm_suggested"), metric_source: z.enum(["user_provided", "llm_suggested"]),
+  design: z.object({
+    design_family: z.enum(["independent_two_arm", "unsupported", "unclear"]),
+    hypothesis: z.string().nullable(), treatment: z.string().nullable(), control: z.string().nullable(),
+    randomization_unit: z.string().nullable(), primary_metric: z.string().nullable(),
+    observation_period: z.string().nullable(), allocation: z.string().nullable(), rationale: z.string(),
+    assumptions: z.array(z.string()), open_questions: z.array(z.string()), limitations: z.array(z.string()),
+  }),
+  planning_inputs: z.object({
+    objective: z.string(), population_size: z.number().nullable(), primary_metric: z.string().nullable(),
+    metric_type: z.enum(["binary", "continuous"]).nullable(), baseline_mean: z.number().nullable(),
+    baseline_sd: z.number().nullable(), baseline_conversion_rate: z.number().nullable(),
+    target_relative_uplift: z.number().nullable(),
+  }),
+  statistics_status: z.literal("not_implemented"), metadata: extractionResponse.shape.metadata,
+});
+export type DesignResponse = z.infer<typeof designResponse>;
+
 export const emptyForm: FormValues = {
   objective: "", population_size: "", primary_metric: "", metric_type: "",
   baseline_mean: "", baseline_sd: "", baseline_conversion_rate: "", target_relative_uplift: "",

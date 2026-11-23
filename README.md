@@ -4,10 +4,11 @@ AI-assisted experiment intake for Product Managers and Growth Analysts. Describe
 synthetic A/B test and inspect extracted values, supporting quotes, conflicts, and
 missing-information questions before making design or sample-size decisions.
 
-**Current scope: the first extraction vertical slice.** Next.js form → FastAPI →
-OpenAI structured output → Pydantic/evidence checks → rendered facts and questions.
-Design generation, numerical statistics, critique, export, real-model evaluations,
-and public deployment are later increments. This is not the completed assignment.
+**Current scope: intake and design proposal.** Next.js form → FastAPI → OpenAI
+structured extraction → validated facts/questions → **Generate experiment design**
+→ a proposed hypothesis, arms, assignment, metric, timeframe, and assumptions.
+Numerical statistics, independent critique, export, model evaluations, and public
+deployment are later increments. This is not the completed assignment.
 
 ## Local setup
 
@@ -55,12 +56,29 @@ extraction. There is no simulated-success switch in the production application.
 
 ## Try the synthetic scenario
 
-Click **Load synthetic example**, then **Extract experiment facts**. Expected behavior:
+For a complete example, click **Load complete synthetic example**, then
+**Extract experiment facts**, then **Generate experiment design**. The preset fills
+the objective and confirmed inputs with fictional values: 100,000 eligible customers,
+continuous spending metric, baseline mean 200 USD, standard deviation 100 USD, and
+relative increase 0.05. Conversion rate is blank because it does not apply.
+See the [full copy-ready example](docs/complete-synthetic-example.md).
+
+The design screen contains a proposed hypothesis, treatment/control, assignment
+unit, primary metric, observation period, allocation, rationale, and questions.
+It labels AI suggestions and preserves the original planning inputs. Use
+**Back to intake** to revise inputs; edits invalidate old proposals.
+
+To see missing-information handling, click **Load example with missing data**, then
+**Extract experiment facts**. Expected behavior:
 
 - Population 100,000, continuous average card spending, relative increase 0.05.
 - Evidence quotes and a confirmation requirement for every prose-extracted value.
 - Questions for baseline mean and standard deviation, with both values null.
 - No fabricated numeric result or claim that an experiment is valid.
+
+Missing baselines allow design generation; actual contradictory inputs must be
+resolved first. A proposal is not a completed statistical validation. The new
+design stage is verified with mocked OpenAI; a live design smoke test is pending.
 
 Open **Optional confirmed inputs** to confirm or correct known values and rerun.
 Use decimals: `0.05` means 5%, `0.10` means 10%. Leave unknown fields blank. A
@@ -78,6 +96,7 @@ Next.js UI → FastAPI validation / request limits
            → OpenAI Responses API + strict Pydantic extraction
            → evidence checks / explicit-input merge / deterministic questions
            → UI facts, conflicts, unknowns, and confirmation prompts
+           → explicit Generate design action → structured design_v1 proposal
 ```
 
 Python owns domain logic; TypeScript owns display and a runtime-validated API
@@ -138,7 +157,7 @@ directories are ignored. Dependency resolutions are checked in for repeatability
 The [GitHub Actions workflow](.github/workflows/ci.yml) runs these checks on pushes
 and pull requests without an OpenAI key. A checked-in workflow is not evidence of
 a successful hosted CI run. Actual local results are recorded in
-[the increment log](docs/increment-1.md).
+[the first increment log](docs/increment-1.md) and [design increment log](docs/increment-2.md).
 
 ## Operational limits
 
@@ -146,7 +165,7 @@ a successful hosted CI run. Actual local results are recorded in
 - Default limits: 5 requests/client/minute, 30 total/minute, 3 concurrent provider
   operations per process; use one worker for local verification.
 - SDK timeout 15 seconds and one transport retry; one schema/evidence repair;
-  overall 45-second extraction deadline, 50-second browser deadline.
+  overall 45-second deadline per stage, 50-second browser deadline.
 - CORS permits only configured origins; socket peer identity ignores untrusted
   forwarded headers. Behind a proxy, clients may share the same rate budget.
 - Metadata logs contain request IDs, model/usage where available, latency, statuses,
@@ -166,11 +185,12 @@ Vercel remains the intended frontend host. Nothing has been published.
 - [x] PRD with explicit unvalidated hypotheses
 - [x] Technical specification, architecture notes, agent instructions, cursor rules
 - [x] Extraction implementation with input validation, missing questions, provenance
-- [x] 64 backend tests, 7 browser tests, lint/typecheck, and production build pass locally
+- [x] 75 backend tests, 10 browser tests, lint/typecheck, and production build pass locally
 - [x] Local secret pattern check and metadata-only request logging
 - [x] Five meaningful local commits (public repository still pending)
 - [x] Successful live OpenAI extraction of the synthetic scenario in the UI
-- [ ] AI design generation and explicit confirmation flow
+- [x] AI design generation, suggestion provenance, and back/edit flow (mocked provider verified)
+- [ ] Live design-generation smoke test and final design confirmation before statistics
 - [ ] Independently tested binary/continuous sample-size engine
 - [ ] Critique, consistency checks, Markdown report/export
 - [ ] ~20 synthetic model evaluation cases and measured quality metrics
@@ -181,5 +201,5 @@ Vercel remains the intended frontend host. Nothing has been published.
 
 Local test results and commit history are recorded separately; no assignment or
 portfolio quality target is marked achieved without evidence. Next implementation
-increment: generate a proposed design from normalized facts, preserve suggestion
-provenance, and obtain confirmed statistical inputs before implementing the engine.
+increment: confirm the proposed design and implement the deterministic statistical
+engine with independently verified reference cases.

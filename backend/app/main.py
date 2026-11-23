@@ -11,6 +11,7 @@ from app.api.routes import router
 from app.api.validation import validation_feedback
 from app.config import Settings
 from app.errors import ServiceError
+from app.llm.design import Designer, OpenAIDesigner
 from app.llm.extraction import Extractor, OpenAIExtractor
 from app.services.limits import RequestLimits
 
@@ -20,13 +21,17 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("openai").setLevel(logging.WARNING)
 
 
-def create_app(settings: Settings | None = None, extractor: Extractor | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    extractor: Extractor | None = None,
+    designer: Designer | None = None,
+) -> FastAPI:
     settings = settings or Settings()
 
     @asynccontextmanager
     async def lifespan(app):
         client = None
-        if extractor is None:
+        if extractor is None or designer is None:
             key = settings.openai_api_key
             if key and key.get_secret_value().strip():
                 client = AsyncOpenAI(
@@ -34,9 +39,8 @@ def create_app(settings: Settings | None = None, extractor: Extractor | None = N
                     timeout=settings.provider_timeout_seconds,
                     max_retries=1,
                 )
-            app.state.extractor = OpenAIExtractor(settings, client)
-        else:
-            app.state.extractor = extractor
+        app.state.extractor = extractor or OpenAIExtractor(settings, client)
+        app.state.designer = designer or OpenAIDesigner(settings, client)
         try:
             yield
         finally:
