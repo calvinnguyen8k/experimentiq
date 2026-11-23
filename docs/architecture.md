@@ -74,6 +74,11 @@ Verified 2026-11-23 against official sources:
 
 ## Spec review
 
+The complete synthetic preset is an explicit user-selected form preset, not a
+fallback for missing data. It fills only intake inputs, never generated results;
+submission still invokes OpenAI and every usual validation/provenance rule.
+The incomplete example is retained to demonstrate missing-information behavior.
+
 The initial handoff did not distinguish a quoted LLM extraction from a verified
 fact. This revision adds mandatory confirmation, contradiction records, strict
 payload limits, safe error envelopes, and a separate `extraction_complete` state

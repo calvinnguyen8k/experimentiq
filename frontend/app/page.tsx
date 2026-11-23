@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ApiError, extractExperiment } from "@/lib/api";
-import { emptyForm, example, ExtractionResponse, FieldName, FormValues, labels } from "@/lib/contracts";
+import { completeExample, emptyForm, example, ExtractionResponse, FieldName, FormValues, labels } from "@/lib/contracts";
 
 const numberFields: { name: FieldName; hint: string; min?: number; max?: number; step?: string }[] = [
   { name: "population_size", hint: "Independent eligible units", min: 2, max: 1_000_000_000, step: "1" },
@@ -18,6 +18,8 @@ export default function Home() {
   const [result, setResult] = useState<ExtractionResponse | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
   const [busy, setBusy] = useState(false);
+  const [exampleNotice, setExampleNotice] = useState<string | null>(null);
+  const assumptions = useRef<HTMLDetailsElement | null>(null);
   const active = useRef<AbortController | null>(null);
   useEffect(() => () => active.current?.abort(), []);
 
@@ -27,6 +29,15 @@ export default function Home() {
       ...(name === "metric_type" && value === "binary" ? { baseline_mean: "", baseline_sd: "" } : {}),
     }));
     setResult(null); setError(null);
+  }
+
+  function loadExample(complete: boolean) {
+    setForm(complete ? { ...completeExample } : { ...emptyForm, objective: example });
+    setResult(null); setError(null);
+    setExampleNotice(complete
+      ? "Complete synthetic example loaded. The objective and confirmed inputs contain fictional demo assumptions, not values inferred by AI. Review them, then extract."
+      : "Synthetic example with missing data loaded. Mean and standard deviation are deliberately blank to demonstrate follow-up questions.");
+    if (assumptions.current) assumptions.current.open = complete;
   }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -76,14 +87,18 @@ export default function Home() {
           <p className="privacy-note">Use synthetic or public toy data only. Do not paste confidential information or customer data. Your description is sent to OpenAI for extraction.</p>
           <form onSubmit={submit}>
             <fieldset disabled={busy}>
-              <div className="label-row"><label htmlFor="objective">Experiment objective <span className="required">*</span></label>
-                <button type="button" className="text-button" onClick={() => { setForm({ ...emptyForm, objective: example }); setError(null); setResult(null); }}>Load synthetic example</button></div>
+              <div className="example-actions">
+                <button type="button" className="text-button" onClick={() => loadExample(true)}>Load complete synthetic example</button>
+                <button type="button" className="text-button" onClick={() => loadExample(false)}>Load example with missing data</button>
+              </div>
+              {exampleNotice && <p className="privacy-note" role="status">{exampleNotice}</p>}
+              <label htmlFor="objective">Experiment objective <span className="required">*</span></label>
               <textarea id="objective" name="objective" required minLength={20} maxLength={4000} rows={7}
                 placeholder="What are you changing, who is eligible, and what outcome do you want to improve?"
                 value={form.objective} onChange={(event) => update("objective", event.target.value)}
                 aria-describedby="objective-hint" aria-invalid={error?.fields.includes("objective") || undefined} />
               <div id="objective-hint" className="field-footer"><span>Include the comparison, metric, and any known assumptions.</span><span>{form.objective.length}/4,000</span></div>
-              <details className="assumptions">
+              <details className="assumptions" ref={assumptions}>
                 <summary>Optional confirmed inputs <span>Fill in what you know</span></summary>
                 <p className="muted">Leave unknowns blank. Values entered here are treated as your confirmed inputs. Correct conflicting prose before rerunning.</p>
                 <div className="form-grid">

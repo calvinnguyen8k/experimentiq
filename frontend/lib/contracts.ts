@@ -53,6 +53,22 @@ export const emptyForm: FormValues = {
 };
 export const example = "We want to test personalized credit-card promotions versus generic promotions for 100,000 eligible customers. Our goal is to increase average card spending by 5%.";
 
+export const completeExample: FormValues = {
+  objective: `${example}
+
+This is a fully synthetic planning scenario; all values below are fictional assumptions.
+Randomly assign independent eligible customers 1:1 to personalized promotions (treatment) or generic promotions (control). Observe each customer for 30 days after assignment.
+The primary metric is average card spending, measured in USD per customer during that 30-day window. The baseline mean is 200 USD and the baseline standard deviation is 100 USD for the same metric and window. The minimum meaningful effect is a 5% relative increase over the baseline mean.
+For this toy example, assume no overlapping campaigns or spillovers between customers. Keep every assigned customer in the analysis, including zero-spend customers. Plan a fixed-horizon, two-sided comparison with alpha 0.05 and power 0.80; do not stop early based on interim results. No experiment results have been observed.`,
+  population_size: "100000",
+  primary_metric: "average card spending",
+  metric_type: "continuous",
+  baseline_mean: "200",
+  baseline_sd: "100",
+  baseline_conversion_rate: "",
+  target_relative_uplift: "0.05",
+};
+
 export function toPayload(values: FormValues) {
   return {
     objective: values.objective.trim(),
