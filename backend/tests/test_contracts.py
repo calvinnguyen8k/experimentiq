@@ -57,7 +57,7 @@ def test_unknown_fields_stay_null_and_cannot_create_statistics():
     assert result.facts.population_size.value == 100000
     assert result.facts.target_relative_uplift.value == 0.05
     assert result.facts.population_size.requires_confirmation
-    assert result.statistics_status == "not_implemented"
+    assert result.statistics_status == "not_computed"
     questions = {q.field: q.reason for q in result.questions}
     assert questions["baseline_mean"] == questions["baseline_sd"] == "missing"
     assert questions["target_relative_uplift"] == "confirmation"
@@ -96,7 +96,7 @@ def test_complete_confirmed_intake_is_not_a_completed_review():
     result = build_response(data, make_run(), "test")
     assert result.status == "extraction_complete"
     assert result.questions == []
-    assert result.statistics_status == "not_implemented"
+    assert result.statistics_status == "not_computed"
     assert "review_complete" not in result.states
 
 

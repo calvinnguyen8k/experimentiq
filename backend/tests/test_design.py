@@ -61,7 +61,7 @@ def test_design_preserves_confirmed_inputs_and_never_computes_statistics():
     assert result.metric_source == "user_provided"
     assert result.design.primary_metric == inputs["primary_metric"]
     assert result.planning_inputs == ExperimentInput(**inputs)
-    assert result.statistics_status == "not_implemented"
+    assert result.statistics_status == "not_computed"
 
 
 def test_missing_baselines_allow_a_draft_and_remain_null():

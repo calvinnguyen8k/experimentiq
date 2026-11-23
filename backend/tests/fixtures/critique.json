@@ -1,0 +1,13 @@
+{
+  "summary": "The synthetic two-arm plan can be documented, but campaign isolation and the spending distribution need verification before launch.",
+  "risks": [
+    {
+      "category": "Contamination",
+      "severity": "medium",
+      "evidence": "The proposal assumes no overlapping campaigns or spillovers.",
+      "explanation": "If customers receive other offers, treatment exposure may not match assignment.",
+      "recommendation": "Audit concurrent campaign eligibility and record exposure before launch."
+    }
+  ],
+  "unresolved_assumptions": ["Verify that the baseline SD describes the same population, metric and 30-day window."]
+}

@@ -46,5 +46,5 @@ class DesignResponse(StrictModel):
     metric_source: Literal["user_provided", "llm_suggested"]
     design: DesignDraft
     planning_inputs: ExperimentInput
-    statistics_status: Literal["not_implemented"] = "not_implemented"
+    statistics_status: Literal["not_computed"] = "not_computed"
     metadata: Metadata

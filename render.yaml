@@ -1,0 +1,25 @@
+# Free portfolio deployment; no auto-upgrade, database purchase or persistent disk.
+services:
+  - type: web
+    name: experimentiq-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --no-access-log --no-proxy-headers
+    healthCheckPath: /health
+    envVars:
+      - key: PRODUCTION_MODE
+        value: 'true'
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: REDIS_REST_URL
+        sync: false
+      - key: REDIS_REST_TOKEN
+        sync: false
+      - key: DAILY_REQUEST_LIMIT
+        value: '120'

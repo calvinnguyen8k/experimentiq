@@ -136,7 +136,7 @@ class ExtractionResponse(StrictModel):
     questions: list[Question]
     conflicts: list[Conflict]
     metric_wording_note: MetricWordingNote | None = None
-    statistics_status: Literal["not_implemented"] = "not_implemented"
+    statistics_status: Literal["not_computed"] = "not_computed"
     metadata: Metadata
 
 

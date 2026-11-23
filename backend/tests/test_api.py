@@ -117,8 +117,8 @@ def test_unexpected_exception_is_safe_and_releases_capacity():
 
 
 def test_future_routes_are_not_claimed_as_implemented(client):
-    assert client.post("/api/v1/experiments/review", json={}).status_code == 404
-    assert client.post("/api/v1/statistics/sample-size", json={}).status_code == 404
+    assert client.post("/api/v1/experiments/review", json={}).status_code == 422
+    assert client.post("/api/v1/statistics/sample-size", json={}).status_code == 422
 
 
 @pytest.mark.parametrize(

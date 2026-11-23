@@ -1,6 +1,16 @@
 """Static, actionable validation feedback without echoing input or exception text."""
 
 CROSS_FIELD_ERRORS = {
+    "stat_target_rate": (
+        "The baseline and effect imply a target rate of 100% or more. Reduce the "
+        "effect or correct the baseline.",
+        ["baseline_conversion_rate", "effect_value"],
+    ),
+    "stat_relative_mean": (
+        "Relative effects require a positive mean. Choose an absolute effect for a "
+        "zero or negative mean.",
+        ["baseline_mean", "effect_type"],
+    ),
     "binary_with_mean": (
         "You selected Binary. Clear baseline mean and standard deviation, or select "
         "Continuous if you are measuring an average such as spending.",
@@ -23,6 +33,10 @@ CROSS_FIELD_ERRORS = {
     ),
 }
 FIELD_MESSAGES = {
+    "alpha": "Alpha must be between 0.000001 and 0.5.",
+    "power": "Power must be greater than 0.5 and at most 0.999999.",
+    "allocation_ratio": "Treatment/control allocation ratio must be between 0.01 and 100.",
+    "effect_value": "Effect must be greater than zero and at most 1e12. Use decimals for rates.",
     "objective": "Describe the experiment in 20–4,000 characters.",
     "population_size": "Eligible population must be a whole number from 2 to 1,000,000,000.",
     "primary_metric": "Primary metric must contain 1–200 characters, or be left blank.",
