@@ -93,3 +93,19 @@ footer { display: flex; justify-content: space-between; align-items: center; gap
 @media (max-width: 760px) { .topbar { min-height: 75px; }.topbar-label { display: none; }.edition { font-size: 11px; }.intro { padding-top: 35px; gap: 24px; }.scope-note { display: none; }h1 { letter-spacing: -1px; }.workflow { gap: 10px; }.step { font-size: 12px; align-content: center; padding: 12px 0; }.step small { display: none; }.workspace { grid-template-columns: 1fr; }.panel { padding: 24px; }.empty-state { min-height: 320px; }.form-grid { grid-template-columns: 1fr 1fr; }footer { flex-wrap: wrap; gap: 8px; }footer p { order: 3; width: 100%; margin: 0; }.intro-copy { font-size: 16px; } }
 @media (max-width: 440px) { .panel { padding: 20px; }.form-grid { grid-template-columns: 1fr; }.label-row { margin-bottom: 10px; }.panel-heading { gap: 10px; }h2 { font-size: 20px; }.field-footer { flex-direction: column; gap: 3px; } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+.workflow button.step { border: 0; border-bottom: 2px solid transparent; background: transparent; text-align: left; font-family: inherit; cursor: pointer; }
+.workflow button.step.active { border-bottom-color: var(--accent); }
+.workflow button.step:disabled { cursor: not-allowed; opacity: .5; }
+.step-number { display: inline-grid; place-items: center; flex-shrink: 0; width: 23px; height: 23px; border: 1px solid currentColor; border-radius: 50%; font-size: 12px; }
+.confirmation { display: flex; align-items: flex-start; gap: 12px; margin: 24px 0; font-size: 14px; font-weight: 500; }
+.confirmation input { flex: 0 0 19px; width: 19px; height: 19px; margin-top: 2px; accent-color: var(--accent); }
+.stage-actions { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+button:disabled { cursor: not-allowed; }
+.stat-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0; }
+.stat-cards > div { background: #f1f7f4; border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+.stat-cards dt { font-size: 13px; color: var(--muted); }.stat-cards dd { margin: 6px 0 0; font-size: clamp(19px, 3vw, 32px); font-weight: 700; overflow-wrap: anywhere; }
+.risk-card { border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin: 14px 0; }.risk-card h3 { display: flex; align-items: center; gap: 10px; }
+.risk-level { text-transform: uppercase; font-size: 11px; border-radius: 4px; padding: 4px 7px; background: #edf6f1; }.risk-level.high { background: #ffe5df; color: #8b3027; }.risk-level.medium { background: #fff3d6; color: #775119; }
+.report-preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; background: #f4f7f6; padding: 16px; max-height: 500px; overflow-y: auto; }
+@media (max-width: 440px) { .stat-cards { gap: 6px; }.stat-cards > div { padding: 10px; }.workflow button.step { font-size: 11px; }.step-number { width: 20px; height: 20px; } }

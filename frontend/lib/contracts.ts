@@ -37,7 +37,7 @@ export const extractionResponse = z.object({
   metric_wording_note: z.object({
     supplied_value: z.string(), extracted_value: z.string(), message: z.string(),
   }).nullable().default(null),
-  statistics_status: z.literal("not_implemented"),
+  statistics_status: z.literal("not_computed"),
   metadata: z.object({
     model: z.string(), prompt_version: z.string(), latency_ms: z.number(),
     attempts: z.number(), input_tokens: z.number().nullable(), output_tokens: z.number().nullable(),
@@ -63,7 +63,7 @@ export const designResponse = z.object({
     baseline_sd: z.number().nullable(), baseline_conversion_rate: z.number().nullable(),
     target_relative_uplift: z.number().nullable(),
   }),
-  statistics_status: z.literal("not_implemented"), metadata: extractionResponse.shape.metadata,
+  statistics_status: z.literal("not_computed"), metadata: extractionResponse.shape.metadata,
 });
 export type DesignResponse = z.infer<typeof designResponse>;
 
@@ -97,5 +97,61 @@ export function toPayload(values: FormValues) {
       return [field, value === "" ? null : ["metric_type", "primary_metric"].includes(field)
         ? value : Number(value)];
     })),
+  };
+}
+
+export const statisticalRequest = z.object({
+  design_family: designResponse.shape.design.shape.design_family,
+  design_confirmed: z.boolean(), independent_units: z.boolean(),
+  primary_metric: z.string().nullable(), metric_type: z.enum(["binary", "continuous"]).nullable(),
+  population_size: z.number().int().nullable(), baseline_mean: z.number().nullable(),
+  baseline_sd: z.number().nullable(), baseline_conversion_rate: z.number().nullable(),
+  effect_type: z.enum(["absolute", "relative"]), effect_value: z.number().nullable(),
+  alpha: z.number(), power: z.number(), allocation_ratio: z.number(),
+});
+export type StatisticalRequest = z.infer<typeof statisticalRequest>;
+export const statisticalResult = z.object({
+  request_id: z.string(), source: z.literal("derived"),
+  status: z.enum(["computed", "insufficient_information", "unsupported_design", "calculation_limit"]),
+  inputs: statisticalRequest, n_control: z.number().int().nullable(), n_treatment: z.number().int().nullable(),
+  total: z.number().int().nullable(), actual_allocation_ratio: z.number().nullable(),
+  achieved_power: z.number().nullable(), absolute_effect: z.number().nullable(), target_rate: z.number().nullable(),
+  feasible: z.boolean().nullable(), formula_id: z.string().nullable(), assumptions: z.array(z.string()),
+  questions: z.array(z.string()), warnings: z.array(z.string()),
+});
+export type StatisticalResult = z.infer<typeof statisticalResult>;
+export const reviewResponse = z.object({
+  request_id: z.string(), status: z.enum(["review_complete", "review_needs_attention"]),
+  objective: z.string(), design: designResponse.shape.design, statistics: statisticalResult,
+  critique: z.object({
+    summary: z.string(), risks: z.array(z.object({
+      category: z.string(), severity: z.enum(["high", "medium", "low"]), evidence: z.string(),
+      explanation: z.string(), recommendation: z.string(),
+    })), unresolved_assumptions: z.array(z.string()),
+  }), checks: z.array(z.string()), metadata: extractionResponse.shape.metadata,
+});
+export type ReviewResponse = z.infer<typeof reviewResponse>;
+export type StatisticalForm = Record<"metric_type" | "population_size" | "baseline_mean" | "baseline_sd" |
+  "baseline_conversion_rate" | "effect_type" | "effect_value" | "alpha" | "power" | "allocation_ratio", string>;
+export function planningForm(design: DesignResponse): StatisticalForm {
+  const p = design.planning_inputs;
+  return {
+    metric_type: p.metric_type ?? "", population_size: p.population_size?.toString() ?? "",
+    baseline_mean: p.baseline_mean?.toString() ?? "", baseline_sd: p.baseline_sd?.toString() ?? "",
+    baseline_conversion_rate: p.baseline_conversion_rate?.toString() ?? "",
+    effect_type: "relative", effect_value: p.target_relative_uplift?.toString() ?? "",
+    alpha: "0.05", power: "0.8", allocation_ratio: "1",
+  };
+}
+export function statisticalPayload(form: StatisticalForm, design: DesignResponse, confirmed: boolean): StatisticalRequest {
+  const num = (key: keyof StatisticalForm) => form[key].trim() === "" ? null : Number(form[key]);
+  return {
+    design_family: design.design.design_family, design_confirmed: confirmed, independent_units: confirmed,
+    primary_metric: design.design.primary_metric, metric_type: form.metric_type as StatisticalRequest["metric_type"] || null,
+    population_size: num("population_size"), baseline_mean: form.metric_type === "binary" ? null : num("baseline_mean"),
+    baseline_sd: form.metric_type === "binary" ? null : num("baseline_sd"),
+    baseline_conversion_rate: form.metric_type === "continuous" ? null : num("baseline_conversion_rate"),
+    effect_type: form.effect_type as "absolute" | "relative", effect_value: num("effect_value"),
+    alpha: Number(form.alpha), power: Number(form.power), allocation_ratio: Number(form.allocation_ratio),
   };
 }

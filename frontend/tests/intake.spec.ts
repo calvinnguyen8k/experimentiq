@@ -15,20 +15,20 @@ test("complete synthetic preset fills applicable fields and reaches intake compl
   const result = await (await response).json();
   expect(result.status).toBe("extraction_complete");
   expect(result.questions).toEqual([]);
-  expect(result.statistics_status).toBe("not_implemented");
+  expect(result.statistics_status).toBe("not_computed");
   expect(result.facts.baseline_conversion_rate.value).toBeNull();
   await expect(page.getByText("Intake complete", { exact: true })).toBeVisible();
   await expect(page.getByText("Your input", { exact: true })).toHaveCount(6);
-  await page.getByRole("button", { name: "Generate experiment design", exact: true }).click();
+  await page.getByRole("button", { name: "Next: Generate experiment design →", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Proposed experiment design" })).toBeVisible();
   await expect(page.getByText("Your draft design is ready")).toBeVisible();
   await expect(page.getByText("Personalized credit-card promotions.", { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("design-proposal-mocked.png"), fullPage: true });
   await page.getByRole("button", { name: "Back to intake" }).click();
-  await expect(page.getByRole("button", { name: "View design proposal" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Next: View design proposal →" })).toBeVisible();
   await page.getByRole("button", { name: "Load example with missing data" }).click();
   await expect(page.getByText("Intake complete", { exact: true })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "View design proposal" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Next: View design proposal →" })).toHaveCount(0);
   await page.getByText("Optional confirmed inputs").click();
   await expect(page.getByLabel("Baseline mean", { exact: true })).toHaveValue("");
 });
@@ -56,7 +56,7 @@ test("confirmed conflicting input is retained and conflict displayed", async ({ 
   await page.getByLabel("Eligible population").fill("5000");
   await page.getByRole("button", { name: "Extract experiment facts" }).click();
   await expect(page.getByText("Resolve conflicting assumptions")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Generate experiment design" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Next: Generate experiment design →" })).toBeDisabled();
   await expect(page.getByText("5,000", { exact: true })).toBeVisible();
   await expect(page.getByText("Your input", { exact: true })).toHaveCount(1);
 });
@@ -65,12 +65,12 @@ test("missing baselines still allow moving to design; editing invalidates the pr
   await page.goto("/");
   await page.getByRole("button", { name: "Load example with missing data" }).click();
   await page.getByRole("button", { name: "Extract experiment facts" }).click();
-  await page.getByRole("button", { name: "Generate experiment design" }).click();
+  await page.getByRole("button", { name: "Next: Generate experiment design →" }).click();
   await expect(page.getByRole("heading", { name: "Proposed experiment design" })).toBeVisible();
   await page.getByRole("button", { name: "Back to intake" }).click();
   await page.getByLabel("Experiment objective").fill("A different synthetic experiment for a new promotional policy.");
-  await expect(page.getByRole("button", { name: "View design proposal" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Generate experiment design" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Next: View design proposal →" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Next: Generate experiment design →" })).toHaveCount(0);
 });
 
 test("design failure retains intake and lets the user retry", async ({ page }) => {
@@ -82,10 +82,10 @@ test("design failure retains intake and lets the user retry", async ({ page }) =
   await page.goto("/");
   await page.getByRole("button", { name: "Load complete synthetic example" }).click();
   await page.getByRole("button", { name: "Extract experiment facts" }).click();
-  await page.getByRole("button", { name: "Generate experiment design" }).click();
+  await page.getByRole("button", { name: "Next: Generate experiment design →" }).click();
   await expect(page.getByRole("alert", { name: "Design could not finish" })).toContainText("temporarily unavailable");
   await expect(page.getByText("Intake complete", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Generate experiment design" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Next: Generate experiment design →" })).toBeEnabled();
 });
 
 test("provider error is actionable and the form stays editable", async ({ page }) => {
@@ -121,7 +121,7 @@ test("mobile intake fits the viewport and supports extraction", async ({ page },
   await expect(page.getByText("A few details need your attention")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   await page.screenshot({ path: testInfo.outputPath("mobile-extraction.png"), fullPage: true });
-  await page.getByRole("button", { name: "Generate experiment design" }).click();
+  await page.getByRole("button", { name: "Next: Generate experiment design →" }).click();
   await expect(page.getByRole("heading", { name: "Proposed experiment design" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   await page.screenshot({ path: testInfo.outputPath("mobile-design-proposal-mocked.png"), fullPage: true });

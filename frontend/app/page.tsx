@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ApiError, extractExperiment, generateDesign } from "@/lib/api";
-import { completeExample, DesignResponse, emptyForm, example, ExtractionResponse, FieldName, FormValues, labels } from "@/lib/contracts";
+import { ApiError, extractExperiment, generateDesign, calculateStatistics, reviewExperiment } from "@/lib/api";
+import { completeExample, DesignResponse, emptyForm, example, ExtractionResponse, FieldName, FormValues, labels, StatisticalForm, StatisticalResult, ReviewResponse, planningForm, statisticalPayload } from "@/lib/contracts";
 import { DesignProposal } from "@/components/design-proposal";
+import { StatisticsPanel } from "@/components/statistics-panel";
+import { ReviewPanel } from "@/components/review-panel";
+import { markdownReport } from "@/lib/report";
 
 const numberFields: { name: FieldName; hint: string; min?: number; max?: number; step?: string }[] = [
   { name: "population_size", hint: "Independent eligible units", min: 2, max: 1_000_000_000, step: "1" },
@@ -22,16 +25,57 @@ export default function Home() {
   const [design, setDesign] = useState<DesignResponse | null>(null);
   const [designError, setDesignError] = useState<ApiError | null>(null);
   const [designBusy, setDesignBusy] = useState(false);
-  const [screen, setScreen] = useState<"intake" | "design">("intake");
+  const [screen, setScreen] = useState<"intake" | "design" | "statistics" | "review">("intake");
+  const [designConfirmed, setDesignConfirmed] = useState(false);
+  const [statsForm, setStatsForm] = useState<StatisticalForm | null>(null);
+  const [statsConfirmed, setStatsConfirmed] = useState(false);
+  const [statistics, setStatistics] = useState<StatisticalResult | null>(null);
+  const [review, setReview] = useState<ReviewResponse | null>(null);
+  const [stageError, setStageError] = useState<ApiError | null>(null);
+  const [stageBusy, setStageBusy] = useState(false);
+  const [acknowledged, setAcknowledged] = useState(false);
   const [exampleNotice, setExampleNotice] = useState<string | null>(null);
   const assumptions = useRef<HTMLDetailsElement | null>(null);
   const active = useRef<AbortController | null>(null);
   useEffect(() => () => active.current?.abort(), []);
   useEffect(() => {
-    if (screen === "design") document.querySelector<HTMLElement>(".proposal-panel")?.focus();
+    if (screen !== "intake") document.querySelector<HTMLElement>(".proposal-panel")?.focus();
   }, [screen]);
 
-  function resetDesign() { setDesign(null); setDesignError(null); setScreen("intake"); }
+  function resetCalculation() { setStatistics(null); setReview(null); setAcknowledged(false); setStageError(null); }
+  function resetDesign() {
+    setDesign(null); setDesignError(null); setScreen("intake");
+    setDesignConfirmed(false); setStatsForm(null); setStatsConfirmed(false); resetCalculation();
+  }
+  function updateStatistics(key: keyof StatisticalForm, value: string) {
+    setStatsForm(old => old ? { ...old, [key]: value,
+      ...(key === "metric_type" ? { baseline_mean: "", baseline_sd: "", baseline_conversion_rate: "" } : {}),
+    } : old);
+    setStatsConfirmed(false); resetCalculation();
+  }
+  function acceptDesign(value: boolean) {
+    setDesignConfirmed(value);
+    if (!value) { setStatsConfirmed(false); resetCalculation(); }
+  }
+  async function runStage(stage: "statistics" | "review") {
+    if (!design || !statsForm || !designConfirmed || !statsConfirmed || stageBusy) return;
+    if (stage === "review" && statistics?.status !== "computed") return;
+    if (stage === "review" && review) { setScreen("review"); return; }
+    setStageBusy(true); setStageError(null);
+    const controller = new AbortController(); active.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 50_000);
+    try {
+      if (stage === "statistics") {
+        resetCalculation();
+        setStatistics(await calculateStatistics(statisticalPayload(statsForm, design, true), controller.signal));
+      } else {
+        setReview(await reviewExperiment(design, statistics!.inputs, controller.signal));
+        setAcknowledged(false); setScreen("review");
+      }
+    } catch (caught) { setStageError(caught instanceof ApiError ? caught : new ApiError(
+      controller.signal.aborted ? "This step timed out. Please retry." : "Could not reach the API. Check the backend and retry.",
+    )); } finally { clearTimeout(timeout); setStageBusy(false); active.current = null; }
+  }
 
   function update(name: keyof FormValues, value: string) {
     setForm((old) => ({ ...old, [name]: value,
@@ -78,7 +122,7 @@ export default function Home() {
     setDesignBusy(true); setDesignError(null);
     const controller = new AbortController(); active.current = controller;
     const timeout = setTimeout(() => controller.abort(), 50_000);
-    try { setDesign(await generateDesign(form, controller.signal)); setScreen("design"); }
+    try { const proposal = await generateDesign(form, controller.signal); setDesign(proposal); setStatsForm(planningForm(proposal)); setScreen("design"); }
     catch (caught) { setDesignError(caught instanceof ApiError ? caught : new ApiError(
       controller.signal.aborted ? "Design generation timed out. Please try again." :
         "Could not reach the API. Check that the backend is running, then try again.",
@@ -86,29 +130,32 @@ export default function Home() {
     finally { clearTimeout(timeout); setDesignBusy(false); active.current = null; }
   }
 
+  const working = busy || designBusy || stageBusy;
   const known = result ? Object.values(result.facts).filter((fact) => fact.value !== null).length : 0;
   return (
     <main>
       <header className="topbar">
         <Link href="/" className="brand" aria-label="ExperimentIQ home"><span className="brand-mark" aria-hidden="true">E</span>Experiment<span className="brand-iq">IQ</span></Link>
         <span className="topbar-label">EXPERIMENT DESIGN WORKSPACE</span>
-        <span className="edition">Intake & design</span>
+        <span className="edition">Plan & review</span>
       </header>
 
       <section className="intro">
         <div><p className="eyebrow">START WITH WHAT YOU KNOW</p><h1>Better experiments<br />begin with clear inputs.</h1>
           <p className="intro-copy">Unpack your idea into traceable facts. Find the missing assumptions before you design the test.</p></div>
-        <aside className="scope-note"><span className="scope-icon" aria-hidden="true">≋</span><strong>Clarity before calculation</strong><p>Extract your inputs, then generate a proposed design. Sample-size calculation and independent risk review come later.</p></aside>
+        <aside className="scope-note"><span className="scope-icon" aria-hidden="true">≋</span><strong>Clarity before calculation</strong><p>Move from confirmed inputs to a design, a Python sample-size calculation, and an exportable risk review.</p></aside>
       </section>
 
       <nav aria-label="Workflow" className="workflow">
-        <span className={`step ${screen === "intake" ? "active" : ""}`} aria-current={screen === "intake" ? "step" : undefined}>Experiment intake</span>
-        <span className={`step ${screen === "design" ? "active" : ""}`} aria-current={screen === "design" ? "step" : undefined}>Design proposal</span>
-        <span className="step">Statistical validation <small>Planned</small></span>
-        <span className="step">Review & export <small>Planned</small></span>
+        {([
+          ["intake", "Experiment intake", true], ["design", "Design proposal", !!design],
+          ["statistics", "Statistical validation", designConfirmed], ["review", "Review & export", !!review],
+        ] as const).map(([key, label, enabled], index) => <button type="button" key={key} className={`step ${screen === key ? "active" : ""}`} aria-current={screen === key ? "step" : undefined} disabled={!enabled || working} onClick={() => setScreen(key)}><span className="step-number">{index + 1}</span>{label}</button>)}
       </nav>
 
-      {screen === "design" && design ? <DesignProposal result={design} onBack={() => setScreen("intake")} /> : <div className="workspace">
+      {screen === "review" && review && result && design ? <ReviewPanel result={review} report={markdownReport(review, result, design)} acknowledged={acknowledged} onAcknowledge={setAcknowledged} onBack={() => setScreen("statistics")} />
+        : screen === "statistics" && statsForm ? <StatisticsPanel form={statsForm} onChange={updateStatistics} confirmed={statsConfirmed} onConfirm={value => { setStatsConfirmed(value); resetCalculation(); }} result={statistics} error={stageError} busy={stageBusy} onCalculate={() => runStage("statistics")} onNext={() => runStage("review")} onBack={() => setScreen("design")} />
+        : screen === "design" && design ? <DesignProposal result={design} onBack={() => setScreen("intake")} confirmed={designConfirmed} onConfirm={acceptDesign} onNext={() => setScreen("statistics")} /> : <div className="workspace">
         <section className="panel intake-panel" aria-labelledby="intake-title">
           <div className="panel-heading"><div><p className="eyebrow">YOUR STARTING POINT</p><h2 id="intake-title">Describe the experiment</h2></div><span className="tag">Input</span></div>
           <p className="privacy-note">Use synthetic or public toy data only. Do not paste confidential information or customer data. Your description is sent to OpenAI for extraction.</p>
@@ -154,7 +201,7 @@ export default function Home() {
             <ul className="expectations"><li>Facts linked to your description</li><li>Explicit unknowns, without invented values</li><li>Focused questions for the next iteration</li></ul></div>}
           {result && <>
             <div className={`result-status ${result.status === "needs_attention" ? "attention" : ""}`}><strong>{result.status === "needs_attention" ? "Resolve conflicting assumptions" : result.status === "missing_information" ? "A few details need your attention" : "Intake complete"}</strong><p>Extraction only. No design validation or sample size has been calculated.</p></div>
-            <div className="next-step"><button className="primary-button" type="button" onClick={nextStep} disabled={designBusy || result.status === "needs_attention"}>{designBusy ? "Generating design…" : design ? "View design proposal" : "Generate experiment design"}</button><p className="muted">{result.status === "needs_attention" ? "Resolve the conflicting inputs and extract again before continuing." : "Continue to a proposed hypothesis, treatment/control, and assignment plan. Missing baselines can be supplied later."}</p></div>
+            <div className="next-step"><button className="primary-button" type="button" onClick={nextStep} disabled={designBusy || result.status === "needs_attention"}>{designBusy ? "Generating design…" : design ? "Next: View design proposal →" : "Next: Generate experiment design →"}</button><p className="muted">{result.status === "needs_attention" ? "Resolve the conflicting inputs and extract again before continuing." : "Continue to a proposed hypothesis, treatment/control, and assignment plan. Missing baselines can be supplied later."}</p></div>
             {designError && <div className="error-box" role="alert" aria-label="Design could not finish"><strong>Design could not finish</strong><p>{designError.message}</p>{designError.requestId && <small>Request {designError.requestId}</small>}</div>}
             {result.conflicts.length > 0 && <div className="conflict-list"><h3>Conflicts to resolve</h3>{result.conflicts.map((conflict, index) => <p key={index}><strong>{labels[conflict.field as FieldName] || conflict.field}: </strong>{conflict.message}{conflict.supplied_value !== null && <> Form: {conflict.supplied_value}. Prose: {conflict.extracted_value}.</>}</p>)}</div>}
             {result.metric_wording_note && <aside className="privacy-note" style={{ marginTop: 16 }}><strong>Metric wording note</strong><p>{result.metric_wording_note.message}</p><p>Your metric: {result.metric_wording_note.supplied_value}. AI wording: {result.metric_wording_note.extracted_value}.</p></aside>}
@@ -171,7 +218,7 @@ export default function Home() {
           </>}
         </section>
       </div>}
-      <footer><span>ExperimentIQ</span><p>Make assumptions visible. Make the next decision clearer.</p><span>Local development · v0.1</span></footer>
+      <footer><span>ExperimentIQ</span><p>Make assumptions visible. Make the next decision clearer.</p><span>Synthetic planning · v0.1</span></footer>
     </main>
   );
 }
