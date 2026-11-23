@@ -40,7 +40,7 @@ chunked requests. Cross-field rejection: binary target rate must be <1; continuo
 relative uplift needs a positive mean when provided; incompatible baseline fields
 for a selected metric type are rejected. Missing values are allowed.
 
-Response 200, abbreviated example (all eight fact keys are always present):
+Response 200, abbreviated example (all seven fact keys are always present):
 
 ```json
 {
@@ -77,7 +77,7 @@ numeric inputs receive attention warnings; they are never used for calculation.
 ## Errors and resource controls
 
 Envelope: `{"error":{"code":"...","message":"...","request_id":"...","fields":[]}}`.
-All errors have a generated request ID, safe text, and field names only.
+All documented errors have a generated request ID, safe text, and field names only.
 
 | HTTP | Code | Meaning |
 |---|---|---|

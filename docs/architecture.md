@@ -49,6 +49,11 @@ flowchart LR
    its documented Responses/structured-output support suits bounded extraction.
    This is not a measured quality choice; account access and live behavior need a
    key-backed smoke test. Lock dependency resolutions for repeatable builds.
+9. **Webpack for portable local builds.** Next.js's Turbopack CSS worker attempted
+   a restricted port bind in this environment. Use the supported `--webpack` flag
+   for development/build so the project does not depend on that worker behavior.
+   `typecheck` generates Next.js types before running TypeScript; generated
+   `next-env.d.ts` stays ignored, following the installed framework documentation.
 
 ## Deployment decision deferred
 
